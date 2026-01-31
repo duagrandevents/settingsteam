@@ -1,84 +1,79 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Truck, X, Save, LogOut } from 'lucide-react';
+import { Truck, Save, LogOut } from 'lucide-react';
 
 const TeamHeader = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [showPopup, setShowPopup] = useState(false);
 
-    // Determine if we are on an operation page (GodownToSite or SiteToGodown)
     const isOperationPage = location.pathname.includes('/outbound') || location.pathname.includes('/inbound');
     const isLandingPage = location.pathname === '/team' || location.pathname === '/team/';
 
     const handleHeaderClick = () => {
-        if (isOperationPage) {
-            setShowPopup(true);
-        } else if (!isLandingPage) {
-            navigate('/team');
-        }
+        if (isOperationPage) setShowPopup(true);
+        else if (!isLandingPage) navigate('/team');
     };
 
     const handleConfirm = (action) => {
         setShowPopup(false);
-        if (action === 'save') {
-            // For now, we assume the user saves manually or we trigger a global save if possible
-            // But based on the request, showing the popup is the primary goal.
-            // Usually 'save' would trigger the 'handleSubmit' in the child component.
-            // Since we can't easily trigger child functions from here without complex state,
-            // we'll advise the user or just navigate if they say they saved.
-            navigate('/team');
-        } else if (action === 'exit') {
-            navigate('/team');
-        }
+        navigate('/team');
     };
 
     return (
         <>
-            <header className="sticky top-0 z-50 bg-bg-deep/80 backdrop-blur-xl border-b border-white/5 py-4 px-6 flex justify-between items-center">
+            <header style={{
+                position: 'sticky', top: 0, zIndex: 500,
+                background: 'rgba(2, 6, 23, 0.9)', backdropFilter: 'blur(16px)',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+            }}>
                 <div
                     onClick={handleHeaderClick}
-                    className="flex items-center gap-3 cursor-pointer group"
+                    style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
                 >
-                    <div className="p-2 bg-primary/10 rounded-xl group-hover:bg-primary/20 transition-colors">
-                        <Truck size={24} className="text-primary" />
+                    <div style={{ padding: '8px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '12px' }}>
+                        <Truck size={24} color="#3b82f6" />
                     </div>
-                    <h1 className="text-xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400 uppercase">
+                    <h1 style={{
+                        margin: 0, fontSize: '18px', fontWeight: 900, letterSpacing: '-0.02em',
+                        background: 'linear-gradient(to right, #60a5fa, #818cf8)',
+                        WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                        textTransform: 'uppercase'
+                    }}>
                         DUA SETTINGS TEAM
                     </h1>
                 </div>
             </header>
 
+            {/* EXIT CONFIRMATION MODAL */}
             {showPopup && (
-                <div className="fixed inset-0 bg-bg-deep/90 backdrop-blur-md z-[100] flex items-center justify-center p-6">
-                    <div className="premium-glass p-8 w-full max-w-sm animate-slide-up border-white/10 text-center">
-                        <div className="mb-6 flex justify-center">
-                            <div className="p-4 bg-accent/10 rounded-full border border-accent/20">
-                                <Save size={32} className="text-accent" />
-                            </div>
+                <div style={{ position: 'fixed', inset: 0, background: 'rgba(2, 6, 23, 0.95)', backdropFilter: 'blur(10px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+                    <div style={{ background: 'rgba(15, 23, 42, 0.95)', border: '1px solid rgba(255,255,255,0.1)', padding: '40px 32px', borderRadius: '32px', width: '100%', maxWidth: '380px', textAlign: 'center' }}>
+                        <div style={{ width: '64px', height: '64px', background: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
+                            <Save size={32} />
                         </div>
-                        <h3 className="text-2xl font-black mb-2">Save Progress?</h3>
-                        <p className="text-text-muted mb-8 text-sm font-medium">
-                            You are about to leave the current operation. Would you like to save your changes before returning home?
-                        </p>
-                        <div className="space-y-3">
+                        <h3 style={{ margin: '0 0 12px 0', fontSize: '24px', fontWeight: 900 }}>SAVE PROGRESS?</h3>
+                        <p style={{ margin: '0 0 32px 0', fontSize: '14px', color: '#94a3b8', lineHeight: 1.6 }}>You are about to leave the current operation. Ensure you have saved your changes before returning home.</p>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                             <button
                                 onClick={() => handleConfirm('save')}
-                                className="btn-primary w-full justify-center py-4"
+                                style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '16px', borderRadius: '16px', fontWeight: 700, fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
                             >
-                                <Save size={20} /> Save & Return
+                                <Save size={18} /> I'VE SAVED & RETURN
                             </button>
                             <button
                                 onClick={() => handleConfirm('exit')}
-                                className="btn-secondary w-full justify-center py-4 text-danger hover:bg-red-500/10 border-red-500/20"
+                                style={{ background: 'rgba(239, 68, 68, 0.05)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', padding: '16px', borderRadius: '16px', fontWeight: 700, fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
                             >
-                                <LogOut size={20} /> Discard & Return
+                                <LogOut size={18} /> DISCARD & RETURN
                             </button>
                             <button
                                 onClick={() => setShowPopup(false)}
-                                className="w-full py-3 text-text-dim text-xs font-bold uppercase tracking-widest hover:text-white transition-colors"
+                                style={{ background: 'none', border: 'none', color: '#64748b', marginTop: '12px', fontSize: '12px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', cursor: 'pointer' }}
                             >
-                                Stay on Page
+                                STAY ON PAGE
                             </button>
                         </div>
                     </div>

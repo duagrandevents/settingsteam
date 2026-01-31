@@ -1,8 +1,7 @@
-import React from 'react';
-import { useApp } from '../context/AppContext';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Truck, Calendar, ChevronRight, Bell, Download, X } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useApp } from '../context/AppContext';
+import { Truck, Calendar, ChevronRight, Bell, Download, X, Package } from 'lucide-react';
 
 const TeamLanding = () => {
     const { sites } = useApp();
@@ -12,13 +11,11 @@ const TeamLanding = () => {
     const [showInstallBanner, setShowInstallBanner] = useState(false);
 
     useEffect(() => {
-        // Notification Logic
         const lastSeenCount = parseInt(localStorage.getItem('team_last_seen_sites')) || 0;
         if (sites.length > lastSeenCount) {
             setShowNotification(true);
         }
 
-        // Install Prompt Logic
         const handleBeforeInstallPrompt = (e) => {
             e.preventDefault();
             setDeferredPrompt(e);
@@ -26,10 +23,7 @@ const TeamLanding = () => {
         };
 
         window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-
-        return () => {
-            window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-        };
+        return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     }, [sites.length]);
 
     const handleMarkAsSeen = () => {
@@ -48,51 +42,55 @@ const TeamLanding = () => {
     };
 
     return (
-        <div className="container animate-slide-up max-w-lg mx-auto pb-24">
+        <div style={{ padding: '0 0 100px 0', minHeight: '100vh', background: '#020617', color: '#f8fafc', fontFamily: "'Outfit', sans-serif" }}>
+            {/* NOTIFICATION */}
             {showNotification && (
                 <div
-                    className="status-notification flex items-center gap-3 cursor-pointer group hover:scale-105 transition-transform"
                     onClick={handleMarkAsSeen}
+                    style={{
+                        background: 'linear-gradient(90deg, #3b82f6, #6366f1)',
+                        padding: '12px 24px', borderRadius: '100px',
+                        position: 'fixed', top: '80px', left: '50%', transform: 'translateX(-50%)',
+                        zIndex: 1000, boxShadow: '0 10px 25px rgba(59, 130, 246, 0.4)',
+                        display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer'
+                    }}
                 >
-                    <div className="bg-white/20 p-2 rounded-full animate-pulse">
-                        <Bell size={18} className="text-white" />
-                    </div>
-                    <span className="font-bold text-sm">New Mission Assigned!</span>
-                    <X size={16} className="opacity-50 group-hover:opacity-100" />
+                    <Bell size={18} color="white" />
+                    <span style={{ fontWeight: 700, fontSize: '14px' }}>New Mission Assigned!</span>
+                    <X size={16} style={{ opacity: 0.6 }} />
                 </div>
             )}
 
-            <div className="pt-8"></div>
+            <div style={{ maxWidth: '500px', margin: '0 auto', padding: '24px' }}>
+                {/* INSTALL BANNER */}
+                {showInstallBanner && (
+                    <div style={{
+                        background: 'rgba(15, 23, 42, 0.7)', backdropFilter: 'blur(16px)',
+                        border: '1px solid rgba(59, 130, 246, 0.3)', borderRadius: '24px',
+                        padding: '24px', marginBottom: '32px', position: 'relative', overflow: 'hidden'
+                    }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
+                            <div style={{ padding: '12px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '16px' }}>
+                                <Download size={32} color="#3b82f6" />
+                            </div>
+                            <div>
+                                <h4 style={{ margin: 0, fontSize: '18px', fontWeight: 900 }}>Install DUA SETTING</h4>
+                                <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#94a3b8' }}>Add to home screen for a seamless experience</p>
+                            </div>
+                        </div>
+                        <div style={{ display: 'flex', gap: '12px' }}>
+                            <button onClick={handleInstallClick} style={{ flex: 1, background: '#3b82f6', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}>INSTALL NOW</button>
+                            <button onClick={() => setShowInstallBanner(false)} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'white', padding: '12px', borderRadius: '12px', cursor: 'pointer' }}>
+                                <X size={20} />
+                            </button>
+                        </div>
+                    </div>
+                )}
 
-            {showInstallBanner && (
-                <div className="premium-glass install-banner mb-8 border-primary/20 overflow-hidden relative group">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
-                    <Download className="text-primary relative z-10" size={32} />
-                    <div className="relative z-10">
-                        <h4 className="font-bold text-lg">Install DUA SETTING</h4>
-                        <p className="text-xs text-text-muted">Add to home screen for a seamless field experience</p>
-                    </div>
-                    <div className="flex gap-3 w-full relative z-10">
-                        <button onClick={handleInstallClick} className="btn-primary flex-1 py-3 text-xs">Install Now</button>
-                        <button
-                            onClick={() => setShowInstallBanner(false)}
-                            className="btn-secondary py-3 px-4 hover:bg-white/10"
-                        >
-                            <X size={18} />
-                        </button>
-                    </div>
-                </div>
-            )}
+                <h2 style={{ fontSize: '11px', fontWeight: 900, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '24px', paddingLeft: '8px' }}>Active Missions</h2>
 
-            <div className="space-y-6">
-                <h2 className="text-xs font-black uppercase tracking-[0.2em] text-text-dim px-2">Assigned Site</h2>
-                {sites.length === 0 ? (
-                    <div className="text-center py-16 premium-glass border-dashed border-white/10">
-                        <Package size={48} className="mx-auto mb-4 text-white/10" />
-                        <p className="text-text-dim font-medium">No sites assigned yet.</p>
-                    </div>
-                ) : (
-                    sites.map(site => (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    {sites && sites.length > 0 ? sites.map(site => (
                         <div
                             key={site.id}
                             onClick={() => {
@@ -105,30 +103,42 @@ const TeamLanding = () => {
                                     : `/team/site/${site.id}/outbound`;
                                 navigate(path);
                             }}
-                            className="premium-glass p-6 flex items-center justify-between cursor-pointer active:scale-95 hover:bg-white/[0.02] group"
+                            style={{
+                                background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255,255,255,0.08)',
+                                borderRadius: '24px', padding: '24px', cursor: 'pointer',
+                                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                                transition: 'all 0.2s', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                            }}
+                            onMouseOver={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; e.currentTarget.style.transform = 'scale(1.02)'; }}
+                            onMouseOut={e => { e.currentTarget.style.background = 'rgba(15, 23, 42, 0.7)'; e.currentTarget.style.transform = 'scale(1)'; }}
                         >
-                            <div className="flex items-center gap-5">
-                                <div className="p-3 bg-white/5 rounded-2xl group-hover:bg-primary/10 transition-colors">
-                                    <Calendar size={24} className="text-primary" />
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                                <div style={{ padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '16px' }}>
+                                    <Calendar size={24} color="#3b82f6" />
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-bold mb-1 group-hover:text-primary transition-colors">{site.name}</h3>
-                                    <div className="flex items-center gap-2 text-sm text-text-dim font-medium uppercase tracking-wider">
-                                        <span>{site.date && typeof site.date === 'string' ? site.date.split('-').reverse().join('-') : 'No Date'}</span>
-                                        <div className="w-1 h-1 bg-white/20 rounded-full"></div>
-                                        <span className={`text-[10px] ${site.status === 'completed' ? 'text-success' :
-                                            site.status === 'outbound_complete' ? 'text-accent' :
-                                                'text-primary'
-                                            }`}>
-                                            {site.status ? String(site.status).replace('_', ' ') : 'ASSIGNED'}
+                                    <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 900, textTransform: 'uppercase' }}>{site.name}</h3>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#64748b', marginTop: '4px', fontWeight: 700 }}>
+                                        <span>{site.date}</span>
+                                        <div style={{ width: '4px', height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '50%' }}></div>
+                                        <span style={{
+                                            color: site.status === 'completed' ? '#10b981' :
+                                                site.status === 'outbound_complete' ? '#f59e0b' : '#3b82f6'
+                                        }}>
+                                            {String(site.status || 'ASSIGNED').replace('_', ' ')}
                                         </span>
                                     </div>
                                 </div>
                             </div>
-                            <ChevronRight className="text-text-dim group-hover:text-primary transform group-hover:translate-x-1 transition-all" />
+                            <ChevronRight size={24} color="#64748b" />
                         </div>
-                    ))
-                )}
+                    )) : (
+                        <div style={{ textAlign: 'center', padding: '60px 24px', borderRadius: '24px', border: '2px dashed rgba(255,255,255,0.1)', opacity: 0.5 }}>
+                            <Package size={48} style={{ margin: '0 auto 16px', display: 'block' }} />
+                            <p style={{ margin: 0, fontWeight: 700 }}>No sites assigned yet.</p>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

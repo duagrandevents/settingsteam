@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { Check, Plus, Save, Share2, ArrowRight } from 'lucide-react';
+import { Check, Plus, Save, ArrowRight } from 'lucide-react';
 
 const GodownToSite = () => {
     const { siteId } = useParams();
@@ -16,7 +16,6 @@ const GodownToSite = () => {
         const data = getSite(siteId);
         if (data) {
             setSite(data);
-            // Initialize with existing data if revisiting, or default collected to 0
             setLocalProducts(data.products.map(p => ({
                 ...p,
                 collected: p.collected !== undefined ? p.collected : 0
@@ -24,7 +23,7 @@ const GodownToSite = () => {
         }
     }, [siteId, getSite]);
 
-    if (!site) return <div className="p-10 text-center">Loading...</div>;
+    if (!site) return <div style={{ padding: '40px', textAlign: 'center', color: '#94a3b8' }}>Loading mission data...</div>;
 
     const handleCollectChange = (index, val) => {
         const newProds = [...localProducts];
@@ -35,11 +34,8 @@ const GodownToSite = () => {
     const handleAddNew = () => {
         if (!newProduct.name) return;
         const item = {
-            name: newProduct.name,
-            count: parseInt(newProduct.count) || 0, // Admin count is basically 0 or what they claim? User said "adding option for team if any product needed"
-            // Usually team adds what they picked which wasn't on list. So target might be 0, collected is X.
-            // Or maybe they just add a request? User said: "it willshows to admin page in another colour"
-            // I'll assume they are adding what they are taking.
+            name: newProduct.name.toUpperCase(),
+            count: parseInt(newProduct.count) || 0,
             collected: parseInt(newProduct.count) || 0,
             isNew: true
         };
@@ -49,83 +45,64 @@ const GodownToSite = () => {
     };
 
     const handleSave = () => {
-        // Save to global state
         updateSite(siteId, {
             products: localProducts,
             status: 'outbound_complete'
         });
-
-        // Navigate
-        navigate(`/team/site/${siteId}/inbound`); // "The page turns to site to godown"
+        navigate(`/team/site/${siteId}/inbound`);
     };
 
     return (
-        <div className="container animate-slide-up pb-32">
-            <header className="mb-6 py-6 flex items-center justify-between border-b border-white/5">
+        <div style={{ padding: '0 0 100px 0', minHeight: '100vh', background: '#020617', color: '#f8fafc', fontFamily: "'Outfit', sans-serif" }}>
+            <header style={{
+                position: 'sticky', top: 0, zIndex: 100,
+                background: 'rgba(2, 6, 23, 0.95)', backdropFilter: 'blur(12px)',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                padding: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+            }}>
                 <div>
-                    <h2 className="text-2xl font-black tracking-tight uppercase">
-                        {site.name}
-                    </h2>
-                    <div className="flex items-center gap-2 mt-1">
-                        <span className="text-primary font-bold">{site.date.split('-').reverse().join('-')}</span>
-                        <div className="w-1 h-1 bg-white/20 rounded-full"></div>
-                        <p className="text-xs text-text-muted font-medium uppercase tracking-widest">Protocol: Godown ➔ Site</p>
-                    </div>
+                    <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 900, textTransform: 'uppercase' }}>{site.name}</h2>
+                    <p style={{ margin: '4px 0 0', fontSize: '10px', fontWeight: 700, color: '#3b82f6', letterSpacing: '0.15em', textTransform: 'uppercase' }}>Phase 1: Godown ➔ Site</p>
                 </div>
-                <button onClick={handleSave} className="btn-primary py-3 px-6">
-                    <Save size={18} /> Next Phase
+                <button onClick={handleSave} style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Save size={18} /> NEXT PHASE
                 </button>
             </header>
 
-            <div className="premium-glass overflow-hidden border-white/5 shadow-2xl">
-                <div className="overflow-x-auto">
-                    <table className="premium-table">
+            <div style={{ padding: '24px', maxWidth: '800px', margin: '0 auto' }}>
+                <div style={{ background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '24px', overflow: 'hidden' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead>
-                            <tr>
-                                <th className="text-left">Inventory Item</th>
-                                <th className="text-center">Req.</th>
-                                <th className="text-center">Collected</th>
-                                <th className="text-center">Verify</th>
+                            <tr style={{ background: 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                <th style={{ padding: '16px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Item</th>
+                                <th style={{ padding: '16px', textAlign: 'center', fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Req.</th>
+                                <th style={{ padding: '16px', textAlign: 'center', fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Pick</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {localProducts.map((product, index) => (
-                                <tr key={index} className={`group transition-colors ${product.isNew ? 'bg-accent/5' : ''}`}>
-                                    <td className="font-bold text-lg">
-                                        <div className="flex items-center gap-3">
-                                            {product.name}
-                                            {product.isNew && (
-                                                <span className="text-[9px] font-black bg-accent/20 text-accent border border-accent/30 px-2 py-0.5 rounded-full uppercase tracking-tighter">
-                                                    Manual
-                                                </span>
-                                            )}
+                            {localProducts.map((p, i) => (
+                                <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)', background: p.isNew ? 'rgba(245, 158, 11, 0.03)' : 'transparent' }}>
+                                    <td style={{ padding: '20px 16px', fontWeight: 700 }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            {p.name}
+                                            {p.isNew && <span style={{ fontSize: '8px', fontWeight: 900, background: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b', padding: '2px 6px', borderRadius: '4px', textTransform: 'uppercase' }}>Field Add</span>}
                                         </div>
                                     </td>
-                                    <td className="text-center font-black text-xl text-text-dim">
-                                        {product.count}
-                                    </td>
-                                    <td className="text-center">
+                                    <td style={{ padding: '20px 16px', textAlign: 'center', fontWeight: 900, fontSize: '20px', color: '#94a3b8' }}>{p.count}</td>
+                                    <td style={{ padding: '20px 16px', textAlign: 'center' }}>
                                         <input
                                             type="number"
-                                            className={`input-field w-24 text-center font-black text-xl h-14 ${product.collected === product.count && product.count > 0
-                                                ? 'border-success text-success bg-success/5'
-                                                : ''
-                                                }`}
-                                            value={product.collected === 0 ? '' : product.collected}
-                                            onChange={(e) => handleCollectChange(index, e.target.value)}
+                                            value={p.collected || ''}
+                                            onChange={e => handleCollectChange(i, e.target.value)}
                                             placeholder="0"
+                                            style={{
+                                                width: '80px', height: '50px',
+                                                textAlign: 'center', fontSize: '20px', fontWeight: 900,
+                                                background: 'rgba(0,0,0,0.2)', border: (p.collected === p.count && p.count > 0) ? '2px solid #10b981' : '1px solid rgba(255,255,255,0.1)',
+                                                color: (p.collected === p.count && p.count > 0) ? '#10b981' : 'white',
+                                                borderRadius: '12px', outline: 'none'
+                                            }}
                                         />
-                                    </td>
-                                    <td className="text-center">
-                                        <div className="flex justify-center">
-                                            {product.collected === product.count && product.count > 0 ? (
-                                                <div className="bg-success/20 p-2 rounded-full text-success border border-success/30">
-                                                    <Check size={20} strokeWidth={3} />
-                                                </div>
-                                            ) : (
-                                                <div className="w-10 h-10 border-2 border-dashed border-white/10 rounded-full"></div>
-                                            )}
-                                        </div>
                                     </td>
                                 </tr>
                             ))}
@@ -134,48 +111,44 @@ const GodownToSite = () => {
                 </div>
             </div>
 
-            {
-                showAdd ? (
-                    <div className="fixed inset-0 bg-bg-deep/80 backdrop-blur-md flex items-center justify-center p-6 z-50">
-                        <div className="premium-glass p-8 w-full max-w-sm animate-slide-up border-white/10">
-                            <h3 className="text-2xl font-black mb-6">Unlisted Item</h3>
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="block text-[10px] font-black uppercase tracking-widest text-text-muted mb-2">Description</label>
-                                    <input
-                                        className="input-field"
-                                        placeholder="Item Name"
-                                        value={newProduct.name}
-                                        onChange={e => setNewProduct({ ...newProduct, name: e.target.value })}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-[10px] font-black uppercase tracking-widest text-text-muted mb-2">Initial Count</label>
-                                    <input
-                                        type="number"
-                                        className="input-field"
-                                        placeholder="Quantity"
-                                        value={newProduct.count}
-                                        onChange={e => setNewProduct({ ...newProduct, count: e.target.value })}
-                                    />
-                                </div>
-                                <div className="flex gap-3 pt-4">
-                                    <button onClick={() => setShowAdd(false)} className="btn-secondary flex-1">Abort</button>
-                                    <button onClick={handleAddNew} className="btn-primary flex-1 justify-center">Add Entry</button>
-                                </div>
+            {/* ADD UNLISTED BUTTON */}
+            {!showAdd && (
+                <button
+                    onClick={() => setShowAdd(true)}
+                    style={{ position: 'fixed', bottom: '32px', right: '32px', width: '64px', height: '64px', borderRadius: '24px', background: '#3b82f6', color: 'white', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 30px rgba(59, 130, 246, 0.5)', cursor: 'pointer' }}
+                >
+                    <Plus size={32} />
+                </button>
+            )}
+
+            {/* ADD MODAL */}
+            {showAdd && (
+                <div style={{ position: 'fixed', inset: 0, background: 'rgba(2, 6, 23, 0.9)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+                    <div style={{ background: 'rgba(15, 23, 42, 0.95)', border: '1px solid rgba(255,255,255,0.1)', padding: '32px', borderRadius: '24px', width: '100%', maxWidth: '360px' }}>
+                        <h3 style={{ margin: '0 0 24px 0', fontSize: '24px', fontWeight: 900, textTransform: 'uppercase' }}>New Entry</h3>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                            <input
+                                placeholder="ITEM DESCRIPTION"
+                                value={newProduct.name}
+                                onChange={e => setNewProduct({ ...newProduct, name: e.target.value })}
+                                style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '16px', borderRadius: '12px', fontWeight: 700 }}
+                            />
+                            <input
+                                type="number"
+                                placeholder="QUANTITY"
+                                value={newProduct.count}
+                                onChange={e => setNewProduct({ ...newProduct, count: e.target.value })}
+                                style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '16px', borderRadius: '12px', fontWeight: 700 }}
+                            />
+                            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                                <button onClick={() => setShowAdd(false)} style={{ flex: 1, background: 'rgba(255,255,255,0.05)', border: 'none', color: '#94a3b8', padding: '16px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}>CANCEL</button>
+                                <button onClick={handleAddNew} style={{ flex: 1, background: '#3b82f6', color: 'white', border: 'none', padding: '16px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}>ADD ITEM</button>
                             </div>
                         </div>
                     </div>
-                ) : (
-                    <button
-                        onClick={() => setShowAdd(true)}
-                        className="fixed bottom-8 right-8 btn-primary h-16 w-16 p-0 rounded-2xl flex items-center justify-center shadow-2xl scale-110 active:scale-95 transition-transform"
-                    >
-                        <Plus size={32} />
-                    </button>
-                )
-            }
-        </div >
+                </div>
+            )}
+        </div>
     );
 };
 

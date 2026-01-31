@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { Send, AlertTriangle, Check, CheckCircle } from 'lucide-react';
+import { Check, AlertTriangle, CheckCircle } from 'lucide-react';
 
 const SiteToGodown = () => {
     const { siteId } = useParams();
@@ -14,15 +14,14 @@ const SiteToGodown = () => {
         const data = getSite(siteId);
         if (data) {
             setSite(data);
-            // Initialize return items based on what was collected in previous step
             setReturnItems(data.products.map(p => ({
                 ...p,
-                returned: p.returned !== undefined ? p.returned : 0 // Default 0
+                returned: p.returned !== undefined ? p.returned : 0
             })));
         }
     }, [siteId, getSite]);
 
-    if (!site) return <div className="p-10 text-center">Loading...</div>;
+    if (!site) return <div style={{ padding: '40px', textAlign: 'center', color: '#94a3b8' }}>Loading mission data...</div>;
 
     const handleReturnChange = (index, val) => {
         const newItems = [...returnItems];
@@ -30,106 +29,85 @@ const SiteToGodown = () => {
         setReturnItems(newItems);
     };
 
-    const handleSubmit = () => {
+    const handleSave = () => {
         updateSite(siteId, {
             products: returnItems,
             status: 'completed'
         });
-        // Maybe notify admin or just go back to landing
-        alert('Report Submitted to Admin!');
+        alert('Mission Logistic Report Submitted!');
         navigate('/team');
     };
 
-    const handleSave = () => {
-        handleSubmit();
-    };
-
     return (
-        <div className="container animate-slide-up pb-32">
-            <header className="mb-6 py-6 flex items-center justify-between border-b border-white/5">
+        <div style={{ padding: '0 0 100px 0', minHeight: '100vh', background: '#020617', color: '#f8fafc', fontFamily: "'Outfit', sans-serif" }}>
+            <header style={{
+                position: 'sticky', top: 0, zIndex: 100,
+                background: 'rgba(2, 6, 23, 0.95)', backdropFilter: 'blur(12px)',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                padding: '24px', display: 'flex', alignItems: 'center', justifyBetween: 'space-between'
+            }}>
                 <div>
-                    <h2 className="text-2xl font-black tracking-tight uppercase">
-                        {site.name}
-                    </h2>
-                    <div className="flex items-center gap-2 mt-1">
-                        <span className="text-secondary font-bold">{site.date.split('-').reverse().join('-')}</span>
-                        <div className="w-1 h-1 bg-white/20 rounded-full"></div>
-                        <p className="text-xs text-text-muted font-medium uppercase tracking-widest">Protocol: Site ➔ Godown</p>
-                    </div>
+                    <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 900, textTransform: 'uppercase' }}>{site.name}</h2>
+                    <p style={{ margin: '4px 0 0', fontSize: '10px', fontWeight: 700, color: '#f59e0b', letterSpacing: '0.15em', textTransform: 'uppercase' }}>Phase 2: Site ➔ Godown</p>
                 </div>
-                <button onClick={handleSave} className="btn-primary from-success to-emerald-600 py-3 px-6">
-                    <CheckCircle size={18} /> Terminalize
+                <button onClick={handleSave} style={{ background: '#10b981', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <CheckCircle size={18} /> TERMINALIZE
                 </button>
             </header>
 
-            <div className="premium-glass overflow-hidden border-white/5 shadow-2xl">
-                <div className="overflow-x-auto">
-                    <table className="premium-table">
+            <div style={{ padding: '24px', maxWidth: '800px', margin: '0 auto' }}>
+                <div style={{ background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '24px', overflow: 'hidden' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead>
-                            <tr>
-                                <th className="text-left">Inventory Item</th>
-                                <th className="text-center">Taken</th>
-                                <th className="text-center">Returning</th>
-                                <th className="text-center">Gaps</th>
+                            <tr style={{ background: 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                <th style={{ padding: '16px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Item</th>
+                                <th style={{ padding: '16px', textAlign: 'center', fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Taken</th>
+                                <th style={{ padding: '16px', textAlign: 'center', fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Back</th>
+                                <th style={{ padding: '16px', textAlign: 'center', fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Gaps</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {returnItems.map((product, index) => {
-                                const taken = product.collected || 0;
-                                const returning = product.returned || 0;
-                                const missing = taken - returning;
-
+                            {returnItems.map((p, i) => {
+                                const taken = p.collected || 0;
+                                const back = p.returned || 0;
+                                const gap = taken - back;
                                 return (
-                                    <tr key={index} className="group transition-colors">
-                                        <td className="font-bold text-lg">
-                                            {product.name}
-                                        </td>
-                                        <td className="text-center font-black text-xl text-text-dim">
-                                            {taken}
-                                        </td>
-                                        <td className="text-center">
+                                    <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+                                        <td style={{ padding: '20px 16px', fontWeight: 700 }}>{p.name}</td>
+                                        <td style={{ padding: '20px 16px', textAlign: 'center', fontWeight: 900, fontSize: '20px', color: '#94a3b8' }}>{taken}</td>
+                                        <td style={{ padding: '20px 16px', textAlign: 'center' }}>
                                             <input
                                                 type="number"
-                                                className={`input-field w-24 text-center font-black text-xl h-14 ${returning === taken && taken > 0
-                                                    ? 'border-success text-success bg-success/5'
-                                                    : missing > 0 ? 'border-danger/30 text-danger bg-danger/5' : ''
-                                                    }`}
-                                                value={product.returned === 0 ? '' : product.returned}
-                                                onChange={(e) => handleReturnChange(index, e.target.value)}
+                                                value={p.returned || ''}
+                                                onChange={e => handleReturnChange(i, e.target.value)}
                                                 placeholder="0"
+                                                style={{
+                                                    width: '80px', height: '50px',
+                                                    textAlign: 'center', fontSize: '20px', fontWeight: 900,
+                                                    background: 'rgba(0,0,0,0.2)', border: gap === 0 ? '2px solid #10b981' : gap > 0 ? '2px solid #ef4444' : '1px solid rgba(255,255,255,0.1)',
+                                                    color: gap === 0 ? '#10b981' : gap > 0 ? '#ef4444' : 'white',
+                                                    borderRadius: '12px', outline: 'none'
+                                                }}
                                             />
                                         </td>
-                                        <td className="text-center">
-                                            {missing > 0 ? (
-                                                <div className="inline-flex items-center gap-2 text-danger font-black text-xl">
-                                                    -{missing} <AlertTriangle size={16} />
+                                        <td style={{ padding: '20px 16px', textAlign: 'center' }}>
+                                            {gap > 0 ? (
+                                                <div style={{ color: '#ef4444', fontWeight: 900, fontSize: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                                                    -{gap} <AlertTriangle size={14} />
                                                 </div>
                                             ) : (
-                                                <div className="flex justify-center">
-                                                    {taken > 0 ? (
-                                                        <div className="bg-success/20 p-2 rounded-full text-success border border-success/30">
-                                                            <Check size={20} strokeWidth={3} />
-                                                        </div>
-                                                    ) : (
-                                                        <div className="w-10 h-10 border-2 border-dashed border-white/10 rounded-full"></div>
-                                                    )}
+                                                <div style={{ color: '#10b981' }}>
+                                                    <Check size={24} strokeWidth={3} />
                                                 </div>
                                             )}
                                         </td>
                                     </tr>
                                 );
                             })}
-                            {returnItems.length === 0 && (
-                                <tr>
-                                    <td colSpan="4" className="p-8 text-center text-text-muted">Nothing to return.</td>
-                                </tr>
-                            )}
                         </tbody>
                     </table>
                 </div>
             </div>
-
-
         </div>
     );
 };
