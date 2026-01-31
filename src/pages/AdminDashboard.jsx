@@ -1,179 +1,155 @@
 import React, { useState } from 'react';
-import { useApp } from '../context/AppContext';
-import { Plus, Calendar, Package, ArrowRight, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useApp } from '../context/AppContext';
+import { Plus, Calendar, Package, ArrowRight, Trash2, LayoutDashboard } from 'lucide-react';
 
 const AdminDashboard = () => {
-    const { sites, addSite, deleteSite } = useApp();
+    const { sites, deleteSite } = useApp();
+    const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const [newSite, setNewSite] = useState({ name: '', date: '' });
-    const [newItems, setNewItems] = useState([{ name: '', count: '' }]); // Table based input
-    const navigate = useNavigate();
 
-    const handleNextStep = (e) => {
+    const handleCreateSite = (e) => {
         e.preventDefault();
-        if (!newSite.name || !newSite.date) return;
-
-        navigate('/shabeeradmindua/create-inventory', {
-            state: { name: newSite.name, date: newSite.date }
-        });
-        setShowModal(false);
+        navigate('/admin/create-inventory', { state: newSite });
     };
 
     return (
-        <div className="container pb-32">
-            <header className="flex flex-col items-center justify-center mb-12 py-10 gap-6" style={{ position: 'sticky', top: 0, background: 'rgba(2, 6, 23, 0.9)', backdropFilter: 'blur(12px)', zIndex: 20, borderBottom: '1px solid rgba(255, 255, 255, 0.1)', marginLeft: '-1.5rem', marginRight: '-1.5rem', paddingLeft: '1.5rem', paddingRight: '1.5rem' }}>
-                <div style={{ textAlign: 'center' }}>
-                    <h1 className="text-4xl font-bold tracking-tight mb-2">
-                        <span style={{ background: 'linear-gradient(to right, #3b82f6, #6366f1, #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: 900, textTransform: 'uppercase' }}>
-                            DUA SETTINGS ADMIN
-                        </span>
-                    </h1>
-                    <p className="text-text-muted text-lg font-medium">Control Center & Live Ops</p>
-                </div>
+        <div style={{ padding: '0 0 100px 0', minHeight: '100vh', background: '#020617', color: '#f8fafc', fontFamily: "'Outfit', sans-serif" }}>
+            {/* STICKY HEADER */}
+            <header style={{
+                position: 'sticky', top: 0, zIndex: 100,
+                background: 'rgba(2, 6, 23, 0.95)', backdropFilter: 'blur(12px)',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                padding: '40px 24px', textAlign: 'center'
+            }}>
+                <h1 style={{ margin: '0 0 8px 0', fontSize: '32px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    <span style={{ background: 'linear-gradient(to right, #3b82f6, #6366f1, #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                        DUA SETTINGS ADMIN
+                    </span>
+                </h1>
+                <p style={{ color: '#94a3b8', fontSize: '16px', fontWeight: 500, margin: '0 0 24px 0' }}>Control Center & Live Ops</p>
+
                 <button
                     onClick={() => setShowModal(true)}
-                    className="btn-primary"
-                    style={{ padding: '1.2rem 3rem', fontSize: '1.1rem', borderRadius: '100px', boxShadow: '0 10px 30px rgba(59, 130, 246, 0.4)' }}
+                    style={{
+                        background: 'linear-gradient(135deg, #3b82f6, #6366f1)',
+                        color: 'white', border: 'none', padding: '16px 40px',
+                        borderRadius: '100px', fontSize: '18px', fontWeight: 700,
+                        cursor: 'pointer', boxShadow: '0 10px 30px rgba(59, 130, 246, 0.4)',
+                        display: 'inline-flex', alignItems: 'center', gap: '8px'
+                    }}
                 >
                     <Plus size={24} /> Deploy New Site
                 </button>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {Array.isArray(sites) && sites.length > 0 ? sites.map(site => (
+            {/* SITES GRID */}
+            <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+                gap: '24px', padding: '32px 24px', maxWidth: '1200px', margin: '0 auto'
+            }}>
+                {sites && sites.length > 0 ? sites.map(site => (
                     <div
                         key={site.id}
-                        className="premium-glass card-hover"
-                        style={{ position: 'relative', overflow: 'hidden', cursor: 'pointer', display: 'flex', flexDirection: 'column' }}
-                        onClick={() => navigate(`/shabeeradmindua/site/${site.id}`)}
+                        style={{
+                            background: 'rgba(15, 23, 42, 0.7)', backdropFilter: 'blur(8px)',
+                            border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '20px',
+                            padding: '24px', cursor: 'pointer', position: 'relative',
+                            display: 'flex', flexDirection: 'column', gap: '16px',
+                            transition: 'all 0.2s', boxShadow: '0 10px 20px rgba(0,0,0,0.2)'
+                        }}
+                        onClick={() => navigate(`/admin/site/${site.id}`)}
+                        onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.3)'; }}
+                        onMouseOut={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)'; }}
                     >
-                        <div style={{ position: 'absolute', top: 0, left: 0, width: '4px', height: '100%', backgroundColor: 'rgba(59, 130, 246, 0.5)' }}></div>
+                        <div style={{ position: 'absolute', top: 0, left: 0, width: '4px', height: '100%', background: '#3b82f6', borderTopLeftRadius: '20px', borderBottomLeftRadius: '20px' }}></div>
 
-                        <div style={{ padding: '1.75rem' }}>
-                            <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem', paddingRight: '2rem' }}>
-                                <h3 className="text-2xl font-black uppercase tracking-tight" style={{ margin: 0, lineHeight: 1.2 }}>{site.name || 'UNNAMED SITE'}</h3>
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        if (window.confirm('Delete this site and all associated reports?')) {
-                                            deleteSite(site.id);
-                                        }
-                                    }}
-                                    style={{ position: 'absolute', top: '-0.5rem', right: '-0.5rem', color: 'rgba(255, 255, 255, 0.4)', border: 'none', background: 'none', cursor: 'pointer', padding: '0.5rem', transition: 'color 0.2s' }}
-                                    onMouseOver={e => e.currentTarget.style.color = '#ef4444'}
-                                    onMouseOut={e => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.4)'}
-                                >
-                                    <Trash2 size={18} />
-                                </button>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 900, textTransform: 'uppercase', lineHeight: 1.2 }}>{site.name || 'Unnamed Site'}</h3>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (window.confirm('Delete this site?')) deleteSite(site.id);
+                                }}
+                                style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', padding: '4px' }}
+                            >
+                                <Trash2 size={18} />
+                            </button>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                            <span style={{
+                                background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6',
+                                border: '1px solid rgba(59, 130, 246, 0.2)', padding: '4px 12px',
+                                borderRadius: '100px', fontSize: '10px', fontWeight: 900,
+                                textTransform: 'uppercase', letterSpacing: '0.1em'
+                            }}>
+                                {String(site.status || 'ASSIGNED').replace('_', ' ')}
+                            </span>
+                        </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', color: '#94a3b8', fontSize: '14px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Calendar size={14} style={{ color: '#60a5fa' }} />
+                                <span>{site.date || 'No Date'}</span>
                             </div>
-
-                            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
-                                <span style={{
-                                    padding: '4px 12px',
-                                    borderRadius: '100px',
-                                    fontSize: '10px',
-                                    fontWeight: 900,
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '0.1em',
-                                    border: '1px solid currentColor',
-                                    backgroundColor: site.status === 'completed' ? 'rgba(16, 185, 129, 0.1)' : site.status === 'outbound_complete' ? 'rgba(245, 158, 11, 0.1)' : 'rgba(59, 130, 246, 0.1)',
-                                    color: site.status === 'completed' ? '#10b981' : site.status === 'outbound_complete' ? '#f59e0b' : '#3b82f6'
-                                }}>
-                                    {site.status ? String(site.status).replace('_', ' ') : 'ASSIGNED'}
-                                </span>
-                            </div>
-
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', color: 'var(--text-muted)' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                    <div style={{ padding: '0.5rem', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '0.75rem' }}>
-                                        <Calendar size={16} style={{ color: '#60a5fa' }} />
-                                    </div>
-                                    <span style={{ fontWeight: 700, fontSize: '0.875rem' }}>
-                                        {site.date && typeof site.date === 'string' ? site.date.split('-').reverse().join('-') : 'N/A'}
-                                    </span>
-                                </div>
-
-                                {site.products && site.products.length > 0 && (
-                                    <div style={{ marginTop: '0.5rem', paddingTop: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                                            <Package size={14} style={{ color: '#818cf8' }} />
-                                            <span style={{ fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255, 255, 255, 0.3)' }}>Inventory Checklist</span>
-                                        </div>
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                            {site.products.slice(0, 3).map((p, i) => (
-                                                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px' }}>
-                                                    <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontWeight: 500 }}>{p.name}</span>
-                                                    <span style={{ fontWeight: 800, color: 'var(--text-main)' }}>{p.count}</span>
-                                                </div>
-                                            ))}
-                                            {site.products.length > 3 && (
-                                                <div style={{ fontSize: '11px', fontWeight: 700, fontStyle: 'italic', color: 'rgba(59, 130, 246, 0.6)', marginTop: '2px' }}>
-                                                    + {site.products.length - 3} more items
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Package size={14} style={{ color: '#818cf8' }} />
+                                <span>{(site.products || []).length} Items Logged</span>
                             </div>
                         </div>
 
-                        <div style={{ marginTop: 'auto', padding: '1.25rem 1.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255, 255, 255, 0.05)', background: 'rgba(255, 255, 255, 0.01)' }}>
-                            <span className="text-primary" style={{ fontWeight: 900, fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase' }}>Command Center</span>
-                            <ArrowRight size={16} className="text-primary" />
+                        {/* PRODUCT PREVIEW */}
+                        {site.products && site.products.length > 0 && (
+                            <div style={{ marginTop: '8px', padding: '12px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.03)' }}>
+                                {site.products.slice(0, 2).map((p, i) => (
+                                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: i === 0 ? '4px' : 0 }}>
+                                        <span style={{ color: '#64748b' }}>{p.name}</span>
+                                        <span style={{ fontWeight: 700 }}>{p.count}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        <div style={{ marginTop: 'auto', paddingTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                            <span style={{ color: '#3b82f6', fontWeight: 900, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Open Command Center</span>
+                            <ArrowRight size={16} color="#3b82f6" />
                         </div>
                     </div>
                 )) : (
-                    <div className="premium-glass p-12 text-center col-span-full border-dashed" style={{ opacity: 0.6, borderStyle: 'dashed' }}>
-                        <div className="flex justify-center mb-4">
-                            <div className="p-4 bg-white/5 rounded-full"><Plus size={40} className="text-text-dim" /></div>
-                        </div>
-                        <h3 className="text-xl font-bold text-text-muted mb-2 uppercase">No Deployments Active</h3>
-                        <p className="text-text-dim max-w-xs mx-auto text-sm">Use the "Deploy New Site" button above to start your first mission assignment.</p>
+                    <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px', borderRadius: '20px', border: '2px dashed rgba(255,255,255,0.1)', opacity: 0.5 }}>
+                        <LayoutDashboard size={48} style={{ margin: '0 auto 16px', display: 'block' }} />
+                        <h3 style={{ fontSize: '18px', fontWeight: 700, textTransform: 'uppercase' }}>No Deployments Active</h3>
+                        <p style={{ fontSize: '14px' }}>Start by deploying a new site mission.</p>
                     </div>
                 )}
             </div>
 
+            {/* DEPLOY MODAL */}
             {showModal && (
-                <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(2, 6, 23, 0.9)', backdropFilter: 'blur(12px)', zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <div className="premium-glass p-10 w-full animate-slide-up" style={{ maxWidth: '32rem', border: '1px solid rgba(255, 255, 255, 0.1)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', textAlign: 'center', margin: 'auto' }}>
-                        <div className="flex flex-col items-center gap-4 mb-10">
-                            <div className="p-4 bg-primary" style={{ backgroundColor: 'rgba(59, 130, 246, 0.1)', borderRadius: '1.5rem' }}>
-                                <Plus size={40} className="text-primary" />
-                            </div>
-                            <h2 className="text-4xl font-black uppercase italic" style={{ tracking: '-0.05em', margin: 0 }}>Deploy Mission</h2>
-                        </div>
-
-                        <form onSubmit={handleNextStep} className="space-y-10">
-                            <div className="space-y-8">
-                                <div style={{ width: '100%' }}>
-                                    <input
-                                        type="text"
-                                        required
-                                        className="input-field py-5 text-xl font-bold"
-                                        style={{ textAlign: 'center', border: '1px solid rgba(255, 255, 255, 0.15)', background: 'rgba(255, 255, 255, 0.03)' }}
-                                        value={newSite.name}
-                                        onChange={e => setNewSite({ ...newSite, name: e.target.value })}
-                                        placeholder="ENTER SITE NAME"
-                                    />
-                                </div>
-                                <div style={{ width: '100%' }}>
-                                    <input
-                                        type="date"
-                                        required
-                                        className="input-field py-5 text-xl font-bold uppercase"
-                                        style={{ textAlign: 'center', border: '1px solid rgba(255, 255, 255, 0.15)', background: 'rgba(255, 255, 255, 0.03)' }}
-                                        value={newSite.date}
-                                        onChange={e => setNewSite({ ...newSite, date: e.target.value })}
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="flex gap-4 pt-4">
-                                <button type="button" onClick={() => setShowModal(false)} className="btn-secondary flex-1 py-4 uppercase font-black tracking-widest text-xs">Abort</button>
-                                <button type="submit" className="btn-primary flex-1 py-4 uppercase font-black tracking-widest text-xs justify-center shadow-primary/20">
-                                    Next Phase <ArrowRight size={16} />
-                                </button>
+                <div style={{ position: 'fixed', inset: 0, background: 'rgba(2, 6, 23, 0.95)', backdropFilter: 'blur(16px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+                    <div style={{ background: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(255,255,255,0.1)', padding: '40px', borderRadius: '32px', width: '100%', maxWidth: '440px', textAlign: 'center' }}>
+                        <h2 style={{ fontSize: '32px', fontWeight: 900, textTransform: 'uppercase', margin: '0 0 32px 0' }}>Deploy Mission</h2>
+                        <form onSubmit={handleCreateSite} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                            <input
+                                required
+                                placeholder="SITE NAME"
+                                value={newSite.name}
+                                onChange={e => setNewSite({ ...newSite, name: e.target.value.toUpperCase() })}
+                                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '16px', borderRadius: '12px', fontSize: '18px', fontWeight: 700, textAlign: 'center' }}
+                            />
+                            <input
+                                required
+                                type="date"
+                                value={newSite.date}
+                                onChange={e => setNewSite({ ...newSite, date: e.target.value })}
+                                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '16px', borderRadius: '12px', fontSize: '18px', fontWeight: 700, textAlign: 'center' }}
+                            />
+                            <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
+                                <button type="button" onClick={() => setShowModal(false)} style={{ flex: 1, background: 'rgba(255,255,255,0.05)', border: 'none', color: '#94a3b8', padding: '16px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}>ABORT</button>
+                                <button type="submit" style={{ flex: 1, background: '#3b82f6', border: 'none', color: 'white', padding: '16px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}>START PHASE 2</button>
                             </div>
                         </form>
                     </div>

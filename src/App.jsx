@@ -35,7 +35,7 @@ const NavBar = () => {
           </div>
           <div className="flex items-center gap-2">
             <div className="flex bg-bg-surface p-1 rounded-lg border border-white/10">
-              <Link to="/shabeeradmindua" className="btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.825rem', borderRadius: '8px' }}>
+              <Link to="/admin" className="btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.825rem', borderRadius: '8px' }}>
                 <LayoutDashboard size={14} /> <span className="hidden sm:inline">Admin</span>
               </Link>
               <Link to="/team" className="btn-secondary" style={{ padding: '0.5rem 1rem', fontSize: '0.825rem', border: 'none', background: 'transparent' }}>
@@ -72,14 +72,16 @@ const App = () => {
         <main className="flex-grow p-4">
           <Routes>
             <Route path="/" element={<AdminDashboard />} />
-            <Route path="/shabeeradmindua" element={<AdminDashboard />} />
-            <Route path="/shabeeradmindua/create-inventory" element={<AdminCreateInventory />} />
-            <Route path="/shabeeradmindua/site/:siteId" element={<AdminSiteDetail />} />
-            {/* Admin Site Detail View could be added here if needed, sticking to dashboard for now */}
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/create-inventory" element={<AdminCreateInventory />} />
+            <Route path="/admin/site/:siteId" element={<AdminSiteDetail />} />
 
             <Route path="/team" element={<TeamLanding />} />
             <Route path="/team/site/:siteId/outbound" element={<GodownToSite />} />
             <Route path="/team/site/:siteId/inbound" element={<SiteToGodown />} />
+
+            {/* Catch-all to prevent 404s */}
+            <Route path="*" element={<AdminDashboard />} />
           </Routes>
         </main>
       </Router>
