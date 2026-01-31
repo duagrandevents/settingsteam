@@ -118,6 +118,26 @@ main {
   background-color: var(--danger);
 }
 
+.text-primary {
+  color: var(--primary);
+}
+
+.text-success {
+  color: var(--success);
+}
+
+.text-danger {
+  color: var(--danger);
+}
+
+.text-accent {
+  color: var(--accent);
+}
+
+.text-white {
+  color: white;
+}
+
 .container {
   max-width: 1100px;
   margin: 0 auto;

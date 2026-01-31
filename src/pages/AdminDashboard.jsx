@@ -119,8 +119,8 @@ const AdminDashboard = () => {
                         </div>
 
                         <div style={{ marginTop: 'auto', padding: '1.25rem 1.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255, 255, 255, 0.05)', background: 'rgba(255, 255, 255, 0.01)' }}>
-                            <span style={{ color: 'var(--primary)', fontWeight: 900, fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase' }}>Command Center</span>
-                            <ArrowRight size={16} style={{ color: 'var(--primary)' }} />
+                            <span className="text-primary" style={{ fontWeight: 900, fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase' }}>Command Center</span>
+                            <ArrowRight size={16} className="text-primary" />
                         </div>
                     </div>
                 )) : (
