@@ -95,7 +95,16 @@ const TeamLanding = () => {
                     sites.map(site => (
                         <div
                             key={site.id}
-                            onClick={() => navigate(`/team/site/${site.id}/outbound`)}
+                            onClick={() => {
+                                if (site.status === 'completed') {
+                                    alert('Mission already completed!');
+                                    return;
+                                }
+                                const path = site.status === 'outbound_complete'
+                                    ? `/team/site/${site.id}/inbound`
+                                    : `/team/site/${site.id}/outbound`;
+                                navigate(path);
+                            }}
                             className="premium-glass p-6 flex items-center justify-between cursor-pointer active:scale-95 hover:bg-white/[0.02] group"
                         >
                             <div className="flex items-center gap-5">

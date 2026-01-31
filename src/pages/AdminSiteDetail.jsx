@@ -106,11 +106,26 @@ const AdminSiteDetail = () => {
                                 const gap = taken - returned;
                                 return (
                                     <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
-                                        <td style={{ padding: '16px', fontWeight: 700 }}>{isEditing ? <input value={p.name} onChange={e => {
-                                            const newP = [...editProducts];
-                                            newP[i].name = e.target.value;
-                                            setEditProducts(newP);
-                                        }} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '8px', borderRadius: '8px', width: '100%' }} /> : p.name}</td>
+                                        <td style={{ padding: '16px', fontWeight: 700 }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                {isEditing ? (
+                                                    <input value={p.name} onChange={e => {
+                                                        const newP = [...editProducts];
+                                                        newP[i].name = e.target.value;
+                                                        setEditProducts(newP);
+                                                    }} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '8px', borderRadius: '8px', width: '100%' }} />
+                                                ) : (
+                                                    <>
+                                                        {p.name}
+                                                        {p.isNew && (
+                                                            <span style={{ fontSize: '9px', fontWeight: 900, background: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.3)', padding: '2px 8px', borderRadius: '100px', textTransform: 'uppercase' }}>
+                                                                Team Added
+                                                            </span>
+                                                        )}
+                                                    </>
+                                                )}
+                                            </div>
+                                        </td>
                                         <td style={{ padding: '16px', textAlign: 'center', fontWeight: 900, color: '#94a3b8' }}>{isEditing ? <input type="number" value={p.count} onChange={e => {
                                             const newP = [...editProducts];
                                             newP[i].count = parseInt(e.target.value) || 0;

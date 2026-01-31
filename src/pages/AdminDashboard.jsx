@@ -81,8 +81,10 @@ const AdminDashboard = () => {
 
                         <div style={{ display: 'flex', gap: '8px' }}>
                             <span style={{
-                                background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6',
-                                border: '1px solid rgba(59, 130, 246, 0.2)', padding: '4px 12px',
+                                background: site.status === 'completed' ? 'rgba(16, 185, 129, 0.1)' : site.status === 'outbound_complete' ? 'rgba(245, 158, 11, 0.1)' : 'rgba(59, 130, 246, 0.1)',
+                                color: site.status === 'completed' ? '#10b981' : site.status === 'outbound_complete' ? '#f59e0b' : '#3b82f6',
+                                border: '1px solid currentColor',
+                                padding: '4px 12px',
                                 borderRadius: '100px', fontSize: '10px', fontWeight: 900,
                                 textTransform: 'uppercase', letterSpacing: '0.1em'
                             }}>
@@ -101,15 +103,20 @@ const AdminDashboard = () => {
                             </div>
                         </div>
 
-                        {/* PRODUCT PREVIEW */}
+                        {/* PRODUCT PREVIEW WITH PROGRESS */}
                         {site.products && site.products.length > 0 && (
                             <div style={{ marginTop: '8px', padding: '12px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.03)' }}>
-                                {site.products.slice(0, 2).map((p, i) => (
-                                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: i === 0 ? '4px' : 0 }}>
-                                        <span style={{ color: '#64748b' }}>{p.name}</span>
-                                        <span style={{ fontWeight: 700 }}>{p.count}</span>
-                                    </div>
-                                ))}
+                                {site.products.slice(0, 3).map((p, i) => {
+                                    const hasStarted = site.status === 'outbound_complete' || site.status === 'completed';
+                                    return (
+                                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: i < site.products.slice(0, 3).length - 1 ? '6px' : 0 }}>
+                                            <span style={{ color: '#94a3b8' }}>{p.name}</span>
+                                            <span style={{ fontWeight: 700, color: hasStarted && (p.collected || 0) < p.count ? '#f59e0b' : 'inherit' }}>
+                                                {hasStarted ? `${p.collected || 0}/${p.count}` : p.count}
+                                            </span>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         )}
 
