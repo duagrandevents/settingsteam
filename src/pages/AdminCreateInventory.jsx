@@ -46,15 +46,20 @@ const AdminCreateInventory = () => {
                 isNew: false
             }));
 
-        addSite({
+        const { error } = await addSite({
             name: siteDetails.name,
             date: siteDetails.date,
             products: products
         });
 
-        setTimeout(() => {
-            navigate('/admin');
-        }, 1200);
+        if (error) {
+            setIsSaving(false);
+            alert('DEPLOYMENT FAILED: ' + (error.message || 'Check your database connection.'));
+        } else {
+            setTimeout(() => {
+                navigate('/admin');
+            }, 1200);
+        }
     };
 
     return (
