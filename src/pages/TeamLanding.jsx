@@ -4,7 +4,7 @@ import { useApp } from '../context/AppContext';
 import { Truck, Calendar, ChevronRight, Bell, Download, X, Package } from 'lucide-react';
 
 const TeamLanding = () => {
-    const { sites } = useApp();
+    const { sites, loading } = useApp();
     const navigate = useNavigate();
     const [showNotification, setShowNotification] = useState(false);
     const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -90,7 +90,11 @@ const TeamLanding = () => {
                 <h2 style={{ fontSize: '11px', fontWeight: 900, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '24px', paddingLeft: '8px' }}>Active Missions</h2>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    {sites && sites.length > 0 ? sites.map(site => (
+                    {loading ? (
+                        <div style={{ textAlign: 'center', padding: '60px 24px', opacity: 0.5 }}>
+                            <p style={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }} className="animate-pulse">Connecting to DUA HQ...</p>
+                        </div>
+                    ) : sites && sites.length > 0 ? sites.map(site => (
                         <div
                             key={site.id}
                             onClick={() => {
