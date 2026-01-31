@@ -26,9 +26,13 @@ const NavBar = () => {
             <Link to="/admin" className="btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.825rem', borderRadius: '8px' }}>
               <LayoutDashboard size={14} /> <span className="hidden sm:inline">Admin</span>
             </Link>
-            <Link to="/team" className="btn-secondary" style={{ padding: '0.5rem 1rem', fontSize: '0.825rem', border: 'none', background: 'transparent' }}>
+            <a
+              href="https://settingsteam.vercel.app/"
+              className="btn-secondary"
+              style={{ padding: '0.5rem 1rem', fontSize: '0.825rem', border: 'none', background: 'transparent', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
               <Users size={14} /> <span className="hidden sm:inline">Team Portal</span>
-            </Link>
+            </a>
           </div>
         </div>
       </nav>
