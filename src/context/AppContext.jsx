@@ -15,7 +15,12 @@ export const AppProvider = ({ children }) => {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (!error) {
+      if (error) {
+        console.error('Supabase Setup Error:', error);
+        if (error.code === 'PGRST116' || error.message.includes('relation "sites" does not exist')) {
+          alert('SYSTEM ERROR: The "sites" table is missing in your Supabase database. Please run the SQL script provided in the sync plan.');
+        }
+      } else {
         setSites(data || []);
       }
       setLoading(false);
