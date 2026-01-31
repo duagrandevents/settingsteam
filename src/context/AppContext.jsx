@@ -18,11 +18,7 @@ export const AppProvider = ({ children }) => {
 
       if (error) {
         console.error('Supabase Connection Error:', error);
-        if (error.code === 'PGRST116' || error.message?.includes('relation "sites" does not exist')) {
-          setDbError('missing_table');
-        } else {
-          setDbError('connection_error');
-        }
+        setDbError(error);
       } else {
         setSites(data || []);
         setDbError(null);

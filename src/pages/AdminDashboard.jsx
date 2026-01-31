@@ -67,7 +67,7 @@ alter publication supabase_realtime add table sites;`;
 
             {/* ERROR / SETUP NOTICES */}
             <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 24px' }}>
-                {dbError === 'missing_table' && (
+                {dbError && (dbError.code === 'PGRST116' || dbError.message?.includes('relation "sites" does not exist')) && (
                     <div style={{
                         background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)',
                         borderRadius: '24px', padding: '32px', marginTop: '32px', textAlign: 'center'
@@ -101,13 +101,20 @@ alter publication supabase_realtime add table sites;`;
                     </div>
                 )}
 
-                {dbError === 'connection_error' && (
+                {dbError && !(dbError.code === 'PGRST116' || dbError.message?.includes('relation "sites" does not exist')) && (
                     <div style={{
                         background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)',
                         borderRadius: '24px', padding: '32px', marginTop: '32px', textAlign: 'center'
                     }}>
                         <h2 style={{ fontSize: '24px', fontWeight: 900, textTransform: 'uppercase', marginBottom: '8px' }}>Connection Error</h2>
-                        <p style={{ color: '#94a3b8' }}>Please check your Supabase URL and Anon Key in <code>src/supabaseClient.js</code>.</p>
+                        <p style={{ color: '#94a3b8', marginBottom: '16px' }}>Supabase returned an error. Please check your credentials in <code>src/supabaseClient.js</code>.</p>
+                        <div style={{ background: 'rgba(0,0,0,0.3)', padding: '16px', borderRadius: '12px', textAlign: 'left', border: '1px solid rgba(239,68,68,0.2)' }}>
+                            <p style={{ margin: '0 0 8px 0', fontSize: '12px', fontWeight: 700, color: '#ef4444' }}>ERROR DETAILS:</p>
+                            <pre style={{ margin: 0, fontSize: '12px', color: 'white', whiteSpace: 'pre-wrap' }}>
+                                {dbError.message || JSON.stringify(dbError)}
+                                {dbError.code && ` (Code: ${dbError.code})`}
+                            </pre>
+                        </div>
                     </div>
                 )}
             </div>
