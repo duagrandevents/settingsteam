@@ -67,7 +67,7 @@ alter publication supabase_realtime add table sites;`;
 
             {/* ERROR / SETUP NOTICES */}
             <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 24px' }}>
-                {dbError && (dbError.code === 'PGRST116' || dbError.message?.includes('relation "sites" does not exist')) && (
+                {dbError && (dbError.code === 'PGRST116' || dbError.code === 'PGRST205' || dbError.message?.includes('relation "sites" does not exist')) && (
                     <div style={{
                         background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)',
                         borderRadius: '24px', padding: '32px', marginTop: '32px', textAlign: 'center'
@@ -101,7 +101,7 @@ alter publication supabase_realtime add table sites;`;
                     </div>
                 )}
 
-                {dbError && !(dbError.code === 'PGRST116' || dbError.message?.includes('relation "sites" does not exist')) && (
+                {dbError && !(dbError.code === 'PGRST116' || dbError.code === 'PGRST205' || dbError.message?.includes('relation "sites" does not exist')) && (
                     <div style={{
                         background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)',
                         borderRadius: '24px', padding: '32px', marginTop: '32px', textAlign: 'center'
