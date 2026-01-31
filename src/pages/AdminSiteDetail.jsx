@@ -5,7 +5,7 @@ import { Save, Plus, Trash2, ArrowLeft, Edit2, AlertTriangle, Share2, Calendar }
 
 const AdminSiteDetail = () => {
     const { siteId } = useParams();
-    const { getSite, updateSite } = useApp();
+    const { getSite, updateSite, loading } = useApp();
     const navigate = useNavigate();
     const [site, setSite] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -18,6 +18,14 @@ const AdminSiteDetail = () => {
             setEditProducts(data.products || []);
         }
     }, [siteId, getSite]);
+
+    if (loading) {
+        return (
+            <div style={{ padding: '100px 24px', textAlign: 'center', color: '#94a3b8', background: '#020617', minHeight: '100vh' }}>
+                <div className="animate-pulse" style={{ fontSize: '24px', fontWeight: 900, textTransform: 'uppercase', color: 'white' }}>Retrieving Cloud Data...</div>
+            </div>
+        );
+    }
 
     if (!site) {
         return (
