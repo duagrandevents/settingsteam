@@ -69,8 +69,8 @@ const TeamLanding = () => {
                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
                     <Download className="text-primary relative z-10" size={32} />
                     <div className="relative z-10">
-                        <h4 className="font-bold text-lg">Native Experience</h4>
-                        <p className="text-xs text-text-muted">Add to home screen for instant access</p>
+                        <h4 className="font-bold text-lg">Install DUA SETTING</h4>
+                        <p className="text-xs text-text-muted">Add to home screen for a seamless field experience</p>
                     </div>
                     <div className="flex gap-3 w-full relative z-10">
                         <button onClick={handleInstallClick} className="btn-primary flex-1 py-3 text-xs">Install Now</button>
