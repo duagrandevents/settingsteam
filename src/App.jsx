@@ -21,10 +21,11 @@ const NavBar = () => {
 };
 
 // Handle routing based on domain (Admin vs Team)
+// Handle routing based on domain (Admin vs Team)
 const HomeRoute = () => {
     const isTeamDomain = window.location.hostname.includes('team') || window.location.hostname.includes('settingsteam');
     if (isTeamDomain) {
-        return <Navigate to="/team" replace />;
+        return <TeamLanding />;
     }
     return <AdminDashboard />;
 };
@@ -43,8 +44,8 @@ const App = () => {
 
                         {/* Team Routes */}
                         <Route path="/team" element={<TeamLanding />} />
-                        <Route path="/team/site/:siteId/outbound" element={<GodownToSite />} />
-                        <Route path="/team/site/:siteId/inbound" element={<SiteToGodown />} />
+                        <Route path="/site/:siteId/outbound" element={<GodownToSite />} />
+                        <Route path="/site/:siteId/inbound" element={<SiteToGodown />} />
 
                         {/* Fallback */}
                         <Route path="*" element={<HomeRoute />} />
