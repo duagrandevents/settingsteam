@@ -97,20 +97,10 @@ const TeamLanding = () => {
                     ) : sites && sites.length > 0 ? sites.map(site => (
                         <div
                             key={site.id}
-                            onClick={() => {
-                                if (site.status === 'completed') {
-                                    alert('Mission already completed!');
-                                    return;
-                                }
-                                const path = site.status === 'outbound_complete'
-                                    ? `/team/site/${site.id}/inbound`
-                                    : `/team/site/${site.id}/outbound`;
-                                navigate(path);
-                            }}
                             style={{
                                 background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255,255,255,0.08)',
-                                borderRadius: '24px', padding: '24px', cursor: 'pointer',
-                                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                                borderRadius: '24px', padding: '24px',
+                                display: 'flex', flexDirection: 'column', gap: '20px',
                                 transition: 'all 0.2s', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                             }}
                             onMouseOver={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; e.currentTarget.style.transform = 'scale(1.02)'; }}
@@ -123,7 +113,7 @@ const TeamLanding = () => {
                                 <div>
                                     <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 900, textTransform: 'uppercase' }}>{site.name}</h3>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#64748b', marginTop: '4px', fontWeight: 700 }}>
-                                        <span>{site.date}</span>
+                                        <Calendar size={14} /> <span>{site.date.split('-').reverse().join('-')}</span>
                                         <div style={{ width: '4px', height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '50%' }}></div>
                                         <span style={{
                                             color: site.status === 'completed' ? '#10b981' :
@@ -134,7 +124,35 @@ const TeamLanding = () => {
                                     </div>
                                 </div>
                             </div>
-                            <ChevronRight size={24} color="#64748b" />
+
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        navigate(`/team/site/${site.id}/outbound`);
+                                    }}
+                                    style={{
+                                        flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid rgba(59, 130, 246, 0.3)',
+                                        background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6', fontWeight: 700, cursor: 'pointer',
+                                        textTransform: 'uppercase', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
+                                    }}
+                                >
+                                    <Truck size={14} /> From Godown
+                                </button>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        navigate(`/team/site/${site.id}/inbound`);
+                                    }}
+                                    style={{
+                                        flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid rgba(16, 185, 129, 0.3)',
+                                        background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', fontWeight: 700, cursor: 'pointer',
+                                        textTransform: 'uppercase', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
+                                    }}
+                                >
+                                    <Package size={14} /> From Site
+                                </button>
+                            </div>
                         </div>
                     )) : (
                         <div style={{ textAlign: 'center', padding: '60px 24px', borderRadius: '24px', border: '2px dashed rgba(255,255,255,0.1)', opacity: 0.5 }}>
