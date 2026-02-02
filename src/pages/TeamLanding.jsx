@@ -11,11 +11,53 @@ const TeamLanding = () => {
     const [showInstallBanner, setShowInstallBanner] = useState(false);
 
     const [isIOS, setIsIOS] = useState(false);
+    const [prevSiteCount, setPrevSiteCount] = useState(0);
+
+    // Notification Logic
+    const playNotificationSound = () => {
+        try {
+            const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+            audio.play().catch(e => console.log('Audio play failed', e));
+        } catch (e) {
+            console.error('Audio error', e);
+        }
+    };
+
+    const triggerNotification = (siteName) => {
+        playNotificationSound();
+        if (Notification.permission === 'granted') {
+            new Notification('New Mission Assigned!', {
+                body: `${siteName} has been added to your list.`,
+                icon: '/vite.svg',
+                vibrate: [200, 100, 200]
+            });
+        }
+        setShowNotification(true);
+    };
 
     useEffect(() => {
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+
         const lastSeenCount = parseInt(localStorage.getItem('team_last_seen_sites')) || 0;
-        if (sites.length > lastSeenCount) {
-            setShowNotification(true);
+
+        // Track site count changes
+        if (sites.length > 0) {
+            // If we have more sites than before (and it's not the initial 0 -> N load if we want to avoid spam on refresh, 
+            // but for "real time" we need to know if it's a *new* update. 
+            // However, useApp loads initial data. We can check against lastSeenCount for the "Badge", 
+            // but for the *Tone*, we want it only when the app receives a LIVE update.
+
+            // Allow tone if sites.length > prevSiteCount AND prevSiteCount > 0 (meaning we already had data and got MORE)
+            if (prevSiteCount > 0 && sites.length > prevSiteCount) {
+                const newSite = sites[0];
+                triggerNotification(newSite.name || 'New Site');
+            } else if (sites.length > lastSeenCount) {
+                // Just the badge on initial load
+                setShowNotification(true);
+            }
+            setPrevSiteCount(sites.length);
         }
 
         // Check if installed
