@@ -64,7 +64,7 @@ const GodownToSite = () => {
         window.open(url, '_blank');
 
         // Navigate
-        navigate(`/team/site/${siteId}/inbound`); // "The page turns to site to godown"
+        navigate(`/site/${siteId}/inbound`); // "The page turns to site to godown"
     };
 
     return (

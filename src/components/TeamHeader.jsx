@@ -8,16 +8,16 @@ const TeamHeader = () => {
     const [showPopup, setShowPopup] = useState(false);
 
     const isOperationPage = location.pathname.includes('/outbound') || location.pathname.includes('/inbound');
-    const isLandingPage = location.pathname === '/team' || location.pathname === '/team/';
+    const isLandingPage = location.pathname === '/' || location.pathname === '/team';
 
     const handleHeaderClick = () => {
         if (isOperationPage) setShowPopup(true);
-        else if (!isLandingPage) navigate('/team');
+        else if (!isLandingPage) navigate('/');
     };
 
     const handleConfirm = (action) => {
         setShowPopup(false);
-        navigate('/team');
+        navigate('/');
     };
 
     return (

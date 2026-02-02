@@ -35,7 +35,7 @@ const SiteToGodown = () => {
             status: 'completed'
         });
         alert('Mission Logistic Report Submitted!');
-        navigate('/team');
+        navigate('/');
     };
 
     return (

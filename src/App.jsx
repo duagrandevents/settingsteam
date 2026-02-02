@@ -24,7 +24,7 @@ const NavBar = () => {
 const HomeRoute = () => {
     const isTeamDomain = window.location.hostname.includes('team') || window.location.hostname.includes('settingsteam');
     if (isTeamDomain) {
-        return <TeamLanding />;
+        return <Navigate to="/team" replace />;
     }
     return <AdminDashboard />;
 };
