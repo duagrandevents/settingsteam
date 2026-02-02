@@ -84,13 +84,15 @@ const NavBar = () => {
 };
 
 const App = () => {
+  const isTeamDomain = window.location.hostname.includes('settingsteam');
+
   return (
     <AppProvider>
       <Router>
         <NavBar />
         <main className="flex-grow p-4">
           <Routes>
-            <Route path="/" element={<AdminDashboard />} />
+            <Route path="/" element={isTeamDomain ? <TeamLanding /> : <AdminDashboard />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/shabeeradmindua" element={<AdminDashboard />} />
             <Route path="/admin/create-inventory" element={<AdminCreateInventory />} />
