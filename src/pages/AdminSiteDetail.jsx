@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { Save, Plus, Trash2, ArrowLeft, Edit2, AlertTriangle, Share2, Calendar, CheckCircle } from 'lucide-react';
+import { Save, Plus, Trash2, ArrowLeft, Edit2, AlertTriangle, Share2, Calendar, Copy } from 'lucide-react';
 
 const AdminSiteDetail = () => {
     const { siteId } = useParams();
@@ -44,20 +44,14 @@ const AdminSiteDetail = () => {
         setIsEditing(false);
     };
 
-    const [reportType, setReportType] = useState(null); // 'collection' | 'return' | null
-
-    const handleShareReport = (type) => {
-        setReportType(type);
-    };
-
-    const generateReportText = () => {
-        const title = reportType === 'collection' ? 'COLLECTION REPORT' : 'RETURN REPORT';
+    const generateReport = (type) => {
+        const title = type === 'collection' ? 'COLLECTION REPORT' : 'RETURN REPORT';
         let reportText = `*${title} - ${site.name}*\nDate: ${site.date}\n\n`;
 
         editProducts.forEach(p => {
             const taken = p.collected || 0;
             const returned = p.returned || 0;
-            if (reportType === 'collection') {
+            if (type === 'collection') {
                 reportText += `- ${p.name}: ${taken}\n`;
             } else {
                 const missing = taken - returned;
@@ -67,16 +61,16 @@ const AdminSiteDetail = () => {
         return reportText;
     };
 
-    const copyToClipboard = () => {
-        const text = generateReportText();
-        navigator.clipboard.writeText(text);
-        alert('Report copied to clipboard!');
+    const handleShareReport = (type) => {
+        const reportText = generateReport(type);
+        const url = `https://wa.me/?text=${encodeURIComponent(reportText)}`;
+        window.open(url, '_blank');
     };
 
-    const shareToWhatsApp = () => {
-        const text = generateReportText();
-        const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-        window.open(url, '_blank');
+    const handleCopyReport = (type) => {
+        const reportText = generateReport(type);
+        navigator.clipboard.writeText(reportText);
+        alert('Report copied to clipboard!');
     };
 
     return (
@@ -109,23 +103,6 @@ const AdminSiteDetail = () => {
                 >
                     {isEditing ? <><Save size={18} /> SAVE CHANGES</> : <><Edit2 size={18} /> EDIT INVENTORY</>}
                 </button>
-                {site.status !== 'completed' && (
-                    <button
-                        onClick={() => {
-                            if (window.confirm('Mark this mission as COMPLETED? This will lock the Team View.')) {
-                                updateSite(site.id, { status: 'completed' });
-                                setSite({ ...site, status: 'completed' });
-                            }
-                        }}
-                        style={{
-                            background: '#f59e0b', color: 'black', border: 'none', padding: '12px 24px',
-                            borderRadius: '12px', fontWeight: 800, cursor: 'pointer', marginLeft: '12px',
-                            display: 'flex', alignItems: 'center', gap: '8px'
-                        }}
-                    >
-                        <CheckCircle size={18} /> FINALIZE
-                    </button>
-                )}
             </header>
 
             <div style={{ padding: '32px 24px', maxWidth: '1000px', margin: '0 auto' }}>
@@ -189,86 +166,27 @@ const AdminSiteDetail = () => {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <h3 style={{ fontSize: '18px', fontWeight: 900, textTransform: 'uppercase' }}>Reports Area</h3>
                         <div style={{ display: 'flex', gap: '12px' }}>
-                            <button onClick={() => handleShareReport('collection')} style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.2)', color: '#3b82f6', padding: '12px 20px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <Share2 size={16} /> COLLECTION
-                            </button>
-                            <button onClick={() => handleShareReport('return')} style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)', color: '#10b981', padding: '12px 20px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <Share2 size={16} /> RETURN
-                            </button>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                                <button onClick={() => handleShareReport('collection')} style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.2)', color: '#3b82f6', padding: '12px 16px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
+                                    <Share2 size={16} /> SHARE
+                                </button>
+                                <button onClick={() => handleCopyReport('collection')} style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.2)', color: '#3b82f6', padding: '12px 16px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
+                                    <Copy size={16} /> COPY
+                                </button>
+                            </div>
+                            <div style={{ width: '1px', background: 'rgba(255,255,255,0.1)', margin: '0 8px' }}></div>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                                <button onClick={() => handleShareReport('return')} style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)', color: '#10b981', padding: '12px 16px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
+                                    <Share2 size={16} /> SHARE
+                                </button>
+                                <button onClick={() => handleCopyReport('return')} style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)', color: '#10b981', padding: '12px 16px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
+                                    <Copy size={16} /> COPY
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            {/* REPORT MODAL */}
-            {reportType && (
-                <div style={{
-                    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)',
-                    zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px'
-                }}>
-                    <div style={{
-                        background: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '24px',
-                        width: '100%', maxWidth: '500px', display: 'flex', flexDirection: 'column', maxHeight: '80vh'
-                    }}>
-                        <div style={{ padding: '24px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <h3 style={{ fontSize: '18px', fontWeight: 900, textTransform: 'uppercase' }}>
-                                {reportType === 'collection' ? 'Collection Report' : 'Return Report'}
-                            </h3>
-                            <button onClick={() => setReportType(null)} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer' }}>Close</button>
-                        </div>
-
-                        <div style={{ overflowY: 'auto', padding: '24px' }}>
-                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                                <thead>
-                                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                                        <th style={{ textAlign: 'left', paddingBottom: '12px', fontSize: '12px', color: '#94a3b8' }}>ITEM</th>
-                                        {reportType === 'collection' ? (
-                                            <>
-                                                <th style={{ textAlign: 'center', paddingBottom: '12px', fontSize: '12px', color: '#94a3b8' }}>TARGET</th>
-                                                <th style={{ textAlign: 'center', paddingBottom: '12px', fontSize: '12px', color: '#94a3b8' }}>PICKED</th>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <th style={{ textAlign: 'center', paddingBottom: '12px', fontSize: '12px', color: '#94a3b8' }}>TAKEN</th>
-                                                <th style={{ textAlign: 'center', paddingBottom: '12px', fontSize: '12px', color: '#94a3b8' }}>RET</th>
-                                                <th style={{ textAlign: 'center', paddingBottom: '12px', fontSize: '12px', color: '#94a3b8' }}>MISSING</th>
-                                            </>
-                                        )}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {editProducts.map((p, i) => (
-                                        <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
-                                            <td style={{ padding: '12px 0', fontWeight: 600 }}>{p.name}</td>
-                                            {reportType === 'collection' ? (
-                                                <>
-                                                    <td style={{ padding: '12px 0', textAlign: 'center', color: '#64748b' }}>{p.count}</td>
-                                                    <td style={{ padding: '12px 0', textAlign: 'center', fontWeight: 700, color: '#10b981' }}>{p.collected || 0}</td>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <td style={{ padding: '12px 0', textAlign: 'center', color: '#64748b' }}>{p.collected || 0}</td>
-                                                    <td style={{ padding: '12px 0', textAlign: 'center', fontWeight: 700 }}>{p.returned || 0}</td>
-                                                    <td style={{ padding: '12px 0', textAlign: 'center', fontWeight: 700, color: (p.collected - p.returned) > 0 ? '#ef4444' : '#64748b' }}>
-                                                        {(p.collected || 0) - (p.returned || 0) > 0 ? (p.collected || 0) - (p.returned || 0) : '-'}
-                                                    </td>
-                                                </>
-                                            )}
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div style={{ padding: '24px', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                            <button onClick={copyToClipboard} style={{ background: 'rgba(255,255,255,0.05)', color: 'white', border: 'none', padding: '14px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}>COPY TEXT</button>
-                            <button onClick={shareToWhatsApp} style={{ background: '#25D366', color: 'black', border: 'none', padding: '14px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                                <Share2 size={18} /> WHATSAPP
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

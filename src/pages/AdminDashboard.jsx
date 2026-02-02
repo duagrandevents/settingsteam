@@ -129,7 +129,7 @@ alter publication supabase_realtime add table sites;`;
                     <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px', opacity: 0.5 }}>
                         <div className="animate-pulse" style={{ fontSize: '24px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Connecting to Cloud...</div>
                     </div>
-                ) : !dbError && Array.isArray(sites) && sites.length > 0 ? (sites || []).map(site => (
+                ) : !dbError && sites && sites.length > 0 ? sites.map(site => (
                     <div
                         key={site.id}
                         style={{

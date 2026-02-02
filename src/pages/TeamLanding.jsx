@@ -94,23 +94,36 @@ const TeamLanding = () => {
                         <div style={{ textAlign: 'center', padding: '60px 24px', opacity: 0.5 }}>
                             <p style={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }} className="animate-pulse">Connecting to DUA HQ...</p>
                         </div>
-                    ) : Array.isArray(sites) && sites.length > 0 ? (sites || []).map(site => (
+                    ) : sites && sites.length > 0 ? sites.map(site => (
                         <div
                             key={site.id}
+                            onClick={() => {
+                                if (site.status === 'completed') {
+                                    alert('Mission already completed!');
+                                    return;
+                                }
+                                const path = site.status === 'outbound_complete'
+                                    ? `/team/site/${site.id}/inbound`
+                                    : `/team/site/${site.id}/outbound`;
+                                navigate(path);
+                            }}
                             style={{
                                 background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255,255,255,0.08)',
-                                borderRadius: '24px', padding: '24px',
+                                borderRadius: '24px', padding: '24px', cursor: 'pointer',
+                                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                                 transition: 'all 0.2s', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                             }}
+                            onMouseOver={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; e.currentTarget.style.transform = 'scale(1.02)'; }}
+                            onMouseOut={e => { e.currentTarget.style.background = 'rgba(15, 23, 42, 0.7)'; e.currentTarget.style.transform = 'scale(1)'; }}
                         >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                                 <div style={{ padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '16px' }}>
                                     <Calendar size={24} color="#3b82f6" />
                                 </div>
                                 <div>
                                     <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 900, textTransform: 'uppercase' }}>{site.name}</h3>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#64748b', marginTop: '4px', fontWeight: 700 }}>
-                                        <span>{site.date ? site.date.split('-').reverse().join('-') : 'No Date'}</span>
+                                        <span>{site.date}</span>
                                         <div style={{ width: '4px', height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '50%' }}></div>
                                         <span style={{
                                             color: site.status === 'completed' ? '#10b981' :
@@ -121,33 +134,7 @@ const TeamLanding = () => {
                                     </div>
                                 </div>
                             </div>
-
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                                <button
-                                    onClick={() => navigate(`/team/site/${site.id}/outbound`)}
-                                    style={{
-                                        background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.2)',
-                                        color: '#3b82f6', padding: '12px', borderRadius: '12px',
-                                        fontWeight: 800, fontSize: '12px', cursor: 'pointer',
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                                        textTransform: 'uppercase'
-                                    }}
-                                >
-                                    <Package size={16} /> FROM GODOWN
-                                </button>
-                                <button
-                                    onClick={() => navigate(`/team/site/${site.id}/inbound`)}
-                                    style={{
-                                        background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.2)',
-                                        color: '#10b981', padding: '12px', borderRadius: '12px',
-                                        fontWeight: 800, fontSize: '12px', cursor: 'pointer',
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                                        textTransform: 'uppercase'
-                                    }}
-                                >
-                                    <Truck size={16} /> FROM SITE
-                                </button>
-                            </div>
+                            <ChevronRight size={24} color="#64748b" />
                         </div>
                     )) : (
                         <div style={{ textAlign: 'center', padding: '60px 24px', borderRadius: '24px', border: '2px dashed rgba(255,255,255,0.1)', opacity: 0.5 }}>
