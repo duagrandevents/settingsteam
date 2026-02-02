@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { Truck, Calendar, ChevronRight, Bell, Download, X, Package, Cloud, Globe, Info } from 'lucide-react';
+import { Truck, Calendar, ChevronRight, Bell, Download, X, Package } from 'lucide-react';
 
 const TeamLanding = () => {
     const { sites, loading } = useApp();
@@ -9,7 +9,6 @@ const TeamLanding = () => {
     const [showNotification, setShowNotification] = useState(false);
     const [deferredPrompt, setDeferredPrompt] = useState(null);
     const [showInstallBanner, setShowInstallBanner] = useState(false);
-    const [showInfo, setShowInfo] = useState(false);
 
     const [isIOS, setIsIOS] = useState(false);
     const [prevSiteCount, setPrevSiteCount] = useState(0);
