@@ -4,7 +4,7 @@ import { useApp } from '../context/AppContext';
 import { Truck, Calendar, ChevronRight, Bell, Download, X, Package } from 'lucide-react';
 
 const TeamLanding = () => {
-    const { sites, loading } = useApp();
+    const { sites, loading, updateSite } = useApp();
     const navigate = useNavigate();
     const [showNotification, setShowNotification] = useState(false);
     const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -126,32 +126,52 @@ const TeamLanding = () => {
                             </div>
 
                             <div style={{ display: 'flex', gap: '10px' }}>
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        navigate(`/team/site/${site.id}/outbound`);
-                                    }}
-                                    style={{
-                                        flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid rgba(59, 130, 246, 0.3)',
-                                        background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6', fontWeight: 700, cursor: 'pointer',
-                                        textTransform: 'uppercase', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
-                                    }}
-                                >
-                                    <Truck size={14} /> From Godown
-                                </button>
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        navigate(`/team/site/${site.id}/inbound`);
-                                    }}
-                                    style={{
-                                        flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid rgba(16, 185, 129, 0.3)',
-                                        background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', fontWeight: 700, cursor: 'pointer',
-                                        textTransform: 'uppercase', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
-                                    }}
-                                >
-                                    <Package size={14} /> From Site
-                                </button>
+                                {(!site.status || site.status === 'assigned') ? (
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            // Handle "Save and Next" logic - Start the mission
+                                            updateSite(site.id, { status: 'work_started' });
+                                        }}
+                                        style={{
+                                            width: '100%', padding: '14px', borderRadius: '12px',
+                                            background: '#3b82f6', color: 'white', fontWeight: 700, cursor: 'pointer',
+                                            textTransform: 'uppercase', fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                                            boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
+                                        }}
+                                    >
+                                        SAVE & NEXT <ChevronRight size={16} />
+                                    </button>
+                                ) : (
+                                    <>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                navigate(`/team/site/${site.id}/outbound`);
+                                            }}
+                                            style={{
+                                                flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid rgba(59, 130, 246, 0.3)',
+                                                background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6', fontWeight: 700, cursor: 'pointer',
+                                                textTransform: 'uppercase', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
+                                            }}
+                                        >
+                                            <Truck size={14} /> From Godown
+                                        </button>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                navigate(`/team/site/${site.id}/inbound`);
+                                            }}
+                                            style={{
+                                                flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid rgba(16, 185, 129, 0.3)',
+                                                background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', fontWeight: 700, cursor: 'pointer',
+                                                textTransform: 'uppercase', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
+                                            }}
+                                        >
+                                            <Package size={14} /> From Site
+                                        </button>
+                                    </>
+                                )}
                             </div>
                         </div>
                     )) : (
