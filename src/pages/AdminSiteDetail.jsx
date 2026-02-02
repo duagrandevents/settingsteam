@@ -44,22 +44,38 @@ const AdminSiteDetail = () => {
         setIsEditing(false);
     };
 
+    const [reportType, setReportType] = useState(null); // 'collection' | 'return' | null
+
     const handleShareReport = (type) => {
-        const title = type === 'collection' ? 'COLLECTION REPORT' : 'RETURN REPORT';
+        setReportType(type);
+    };
+
+    const generateReportText = () => {
+        const title = reportType === 'collection' ? 'COLLECTION REPORT' : 'RETURN REPORT';
         let reportText = `*${title} - ${site.name}*\nDate: ${site.date}\n\n`;
 
         editProducts.forEach(p => {
             const taken = p.collected || 0;
             const returned = p.returned || 0;
-            if (type === 'collection') {
+            if (reportType === 'collection') {
                 reportText += `- ${p.name}: ${taken}\n`;
             } else {
                 const missing = taken - returned;
                 reportText += `- ${p.name}: Taken ${taken}, Ret ${returned}${missing > 0 ? ` (*MISSING ${missing}*)` : ''}\n`;
             }
         });
+        return reportText;
+    };
 
-        const url = `https://wa.me/?text=${encodeURIComponent(reportText)}`;
+    const copyToClipboard = () => {
+        const text = generateReportText();
+        navigator.clipboard.writeText(text);
+        alert('Report copied to clipboard!');
+    };
+
+    const shareToWhatsApp = () => {
+        const text = generateReportText();
+        const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
         window.open(url, '_blank');
     };
 
@@ -166,6 +182,76 @@ const AdminSiteDetail = () => {
                     </div>
                 </div>
             </div>
+
+            {/* REPORT MODAL */}
+            {reportType && (
+                <div style={{
+                    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)',
+                    zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px'
+                }}>
+                    <div style={{
+                        background: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '24px',
+                        width: '100%', maxWidth: '500px', display: 'flex', flexDirection: 'column', maxHeight: '80vh'
+                    }}>
+                        <div style={{ padding: '24px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <h3 style={{ fontSize: '18px', fontWeight: 900, textTransform: 'uppercase' }}>
+                                {reportType === 'collection' ? 'Collection Report' : 'Return Report'}
+                            </h3>
+                            <button onClick={() => setReportType(null)} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer' }}>Close</button>
+                        </div>
+
+                        <div style={{ overflowY: 'auto', padding: '24px' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                <thead>
+                                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                                        <th style={{ textAlign: 'left', paddingBottom: '12px', fontSize: '12px', color: '#94a3b8' }}>ITEM</th>
+                                        {reportType === 'collection' ? (
+                                            <>
+                                                <th style={{ textAlign: 'center', paddingBottom: '12px', fontSize: '12px', color: '#94a3b8' }}>TARGET</th>
+                                                <th style={{ textAlign: 'center', paddingBottom: '12px', fontSize: '12px', color: '#94a3b8' }}>PICKED</th>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <th style={{ textAlign: 'center', paddingBottom: '12px', fontSize: '12px', color: '#94a3b8' }}>TAKEN</th>
+                                                <th style={{ textAlign: 'center', paddingBottom: '12px', fontSize: '12px', color: '#94a3b8' }}>RET</th>
+                                                <th style={{ textAlign: 'center', paddingBottom: '12px', fontSize: '12px', color: '#94a3b8' }}>MISSING</th>
+                                            </>
+                                        )}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {editProducts.map((p, i) => (
+                                        <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+                                            <td style={{ padding: '12px 0', fontWeight: 600 }}>{p.name}</td>
+                                            {reportType === 'collection' ? (
+                                                <>
+                                                    <td style={{ padding: '12px 0', textAlign: 'center', color: '#64748b' }}>{p.count}</td>
+                                                    <td style={{ padding: '12px 0', textAlign: 'center', fontWeight: 700, color: '#10b981' }}>{p.collected || 0}</td>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <td style={{ padding: '12px 0', textAlign: 'center', color: '#64748b' }}>{p.collected || 0}</td>
+                                                    <td style={{ padding: '12px 0', textAlign: 'center', fontWeight: 700 }}>{p.returned || 0}</td>
+                                                    <td style={{ padding: '12px 0', textAlign: 'center', fontWeight: 700, color: (p.collected - p.returned) > 0 ? '#ef4444' : '#64748b' }}>
+                                                        {(p.collected || 0) - (p.returned || 0) > 0 ? (p.collected || 0) - (p.returned || 0) : '-'}
+                                                    </td>
+                                                </>
+                                            )}
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div style={{ padding: '24px', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                            <button onClick={copyToClipboard} style={{ background: 'rgba(255,255,255,0.05)', color: 'white', border: 'none', padding: '14px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}>COPY TEXT</button>
+                            <button onClick={shareToWhatsApp} style={{ background: '#25D366', color: 'black', border: 'none', padding: '14px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                                <Share2 size={18} /> WHATSAPP
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
