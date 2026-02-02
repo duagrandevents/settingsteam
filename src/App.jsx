@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminCreateInventory from './pages/AdminCreateInventory';
 import AdminSiteDetail from './pages/AdminSiteDetail';
 import TeamLanding from './pages/TeamLanding';
 import GodownToSite from './pages/GodownToSite';
@@ -28,6 +29,7 @@ const App = () => {
                     <Routes>
                         {/* Admin Routes */}
                         <Route path="/" element={<AdminDashboard />} />
+                        <Route path="/create-inventory" element={<AdminCreateInventory />} />
                         <Route path="/site/:siteId" element={<AdminSiteDetail />} />
 
                         {/* Team Routes */}
