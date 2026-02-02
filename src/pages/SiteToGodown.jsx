@@ -38,21 +38,30 @@ const SiteToGodown = () => {
         navigate('/team');
     };
 
+    const isReadOnly = site.status === 'completed';
+
     return (
         <div style={{ padding: '0 0 100px 0', minHeight: '100vh', background: '#020617', color: '#f8fafc', fontFamily: "'Outfit', sans-serif" }}>
             <header style={{
                 position: 'sticky', top: 0, zIndex: 100,
                 background: 'rgba(2, 6, 23, 0.95)', backdropFilter: 'blur(12px)',
                 borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-                padding: '24px', display: 'flex', alignItems: 'center', justifyBetween: 'space-between'
+                padding: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between'
             }}>
                 <div>
                     <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 900, textTransform: 'uppercase' }}>{site.name}</h2>
                     <p style={{ margin: '4px 0 0', fontSize: '10px', fontWeight: 700, color: '#f59e0b', letterSpacing: '0.15em', textTransform: 'uppercase' }}>Phase 2: Site ➔ Godown</p>
                 </div>
-                <button onClick={handleSave} style={{ background: '#10b981', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <CheckCircle size={18} /> TERMINALIZE
-                </button>
+                {!isReadOnly && (
+                    <button onClick={handleSave} style={{ background: '#10b981', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <CheckCircle size={18} /> TERMINALIZE
+                    </button>
+                )}
+                {isReadOnly && (
+                    <div style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.2)', padding: '8px 16px', borderRadius: '100px', fontWeight: 900, fontSize: '11px', letterSpacing: '0.1em', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <Check size={14} strokeWidth={3} /> COMPLETED
+                    </div>
+                )}
             </header>
 
             <div style={{ padding: '24px', maxWidth: '800px', margin: '0 auto' }}>
@@ -81,12 +90,14 @@ const SiteToGodown = () => {
                                                 value={p.returned || ''}
                                                 onChange={e => handleReturnChange(i, e.target.value)}
                                                 placeholder="0"
+                                                disabled={isReadOnly}
                                                 style={{
                                                     width: '80px', height: '50px',
                                                     textAlign: 'center', fontSize: '20px', fontWeight: 900,
                                                     background: 'rgba(0,0,0,0.2)', border: gap === 0 ? '2px solid #10b981' : gap > 0 ? '2px solid #ef4444' : '1px solid rgba(255,255,255,0.1)',
                                                     color: gap === 0 ? '#10b981' : gap > 0 ? '#ef4444' : 'white',
-                                                    borderRadius: '12px', outline: 'none'
+                                                    borderRadius: '12px', outline: 'none',
+                                                    opacity: isReadOnly ? 0.7 : 1
                                                 }}
                                             />
                                         </td>

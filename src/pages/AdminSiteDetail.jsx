@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { Save, Plus, Trash2, ArrowLeft, Edit2, AlertTriangle, Share2, Calendar } from 'lucide-react';
+import { Save, Plus, Trash2, ArrowLeft, Edit2, AlertTriangle, Share2, Calendar, CheckCircle } from 'lucide-react';
 
 const AdminSiteDetail = () => {
     const { siteId } = useParams();
@@ -109,6 +109,23 @@ const AdminSiteDetail = () => {
                 >
                     {isEditing ? <><Save size={18} /> SAVE CHANGES</> : <><Edit2 size={18} /> EDIT INVENTORY</>}
                 </button>
+                {site.status !== 'completed' && (
+                    <button
+                        onClick={() => {
+                            if (window.confirm('Mark this mission as COMPLETED? This will lock the Team View.')) {
+                                updateSite(site.id, { status: 'completed' });
+                                setSite({ ...site, status: 'completed' });
+                            }
+                        }}
+                        style={{
+                            background: '#f59e0b', color: 'black', border: 'none', padding: '12px 24px',
+                            borderRadius: '12px', fontWeight: 800, cursor: 'pointer', marginLeft: '12px',
+                            display: 'flex', alignItems: 'center', gap: '8px'
+                        }}
+                    >
+                        <CheckCircle size={18} /> FINALIZE
+                    </button>
+                )}
             </header>
 
             <div style={{ padding: '32px 24px', maxWidth: '1000px', margin: '0 auto' }}>

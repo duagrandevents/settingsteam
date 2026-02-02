@@ -52,6 +52,8 @@ const GodownToSite = () => {
         navigate(`/team/site/${siteId}/inbound`);
     };
 
+    const isReadOnly = site.status === 'completed';
+
     return (
         <div style={{ padding: '0 0 100px 0', minHeight: '100vh', background: '#020617', color: '#f8fafc', fontFamily: "'Outfit', sans-serif" }}>
             <header style={{
@@ -64,9 +66,16 @@ const GodownToSite = () => {
                     <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 900, textTransform: 'uppercase' }}>{site.name}</h2>
                     <p style={{ margin: '4px 0 0', fontSize: '10px', fontWeight: 700, color: '#3b82f6', letterSpacing: '0.15em', textTransform: 'uppercase' }}>Phase 1: Godown ➔ Site</p>
                 </div>
-                <button onClick={handleSave} style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Save size={18} /> NEXT PHASE
-                </button>
+                {!isReadOnly && (
+                    <button onClick={handleSave} style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Save size={18} /> NEXT PHASE
+                    </button>
+                )}
+                {isReadOnly && (
+                    <div style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.2)', padding: '8px 16px', borderRadius: '100px', fontWeight: 900, fontSize: '11px', letterSpacing: '0.1em', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <Check size={14} strokeWidth={3} /> COMPLETED
+                    </div>
+                )}
             </header>
 
             <div style={{ padding: '24px', maxWidth: '800px', margin: '0 auto' }}>
@@ -95,12 +104,14 @@ const GodownToSite = () => {
                                             value={p.collected || ''}
                                             onChange={e => handleCollectChange(i, e.target.value)}
                                             placeholder="0"
+                                            disabled={isReadOnly}
                                             style={{
                                                 width: '80px', height: '50px',
                                                 textAlign: 'center', fontSize: '20px', fontWeight: 900,
                                                 background: 'rgba(0,0,0,0.2)', border: (p.collected === p.count && p.count > 0) ? '2px solid #10b981' : '1px solid rgba(255,255,255,0.1)',
                                                 color: (p.collected === p.count && p.count > 0) ? '#10b981' : 'white',
-                                                borderRadius: '12px', outline: 'none'
+                                                borderRadius: '12px', outline: 'none',
+                                                opacity: isReadOnly ? 0.7 : 1
                                             }}
                                         />
                                     </td>
@@ -112,7 +123,7 @@ const GodownToSite = () => {
             </div>
 
             {/* ADD UNLISTED BUTTON */}
-            {!showAdd && (
+            {!showAdd && !isReadOnly && (
                 <button
                     onClick={() => setShowAdd(true)}
                     style={{ position: 'fixed', bottom: '32px', right: '32px', width: '64px', height: '64px', borderRadius: '24px', background: '#3b82f6', color: 'white', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 30px rgba(59, 130, 246, 0.5)', cursor: 'pointer' }}
