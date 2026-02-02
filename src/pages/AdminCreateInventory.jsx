@@ -148,14 +148,47 @@ const AdminCreateInventory = () => {
                             return (
                                 <div key={index} style={{ display: 'flex', gap: '12px', marginBottom: '16px', alignItems: 'center', position: 'relative' }}>
                                     <div style={{ flex: 1, position: 'relative' }}>
-                                        <input
-                                            placeholder="ITEM NAME (E.G. CHAIRS)"
-                                            value={item.name}
-                                            onFocus={() => { setFocusedIndex(index); setShowSuggestions(item.name.length > 0); }}
-                                            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                                            onChange={e => handleItemChange(index, 'name', e.target.value)}
-                                            style={{ background: 'rgba(2, 6, 23, 0.5)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '16px', borderRadius: '12px', width: '100%', fontSize: '16px', fontWeight: 700, textTransform: 'uppercase' }}
-                                        />
+                                        <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                                            <input
+                                                placeholder="ITEM NAME (E.G. CHAIRS)"
+                                                value={item.name}
+                                                onFocus={() => { setFocusedIndex(index); setShowSuggestions(item.name.length > 0); }}
+                                                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                                                onChange={e => handleItemChange(index, 'name', e.target.value)}
+                                                style={{
+                                                    background: 'rgba(2, 6, 23, 0.5)',
+                                                    border: '1px solid rgba(255,255,255,0.1)',
+                                                    color: 'white',
+                                                    padding: '16px 40px 16px 16px', // Extra padding for X button
+                                                    borderRadius: '12px',
+                                                    width: '100%',
+                                                    fontSize: '16px',
+                                                    fontWeight: 700,
+                                                    textTransform: 'uppercase'
+                                                }}
+                                            />
+                                            {item.name.length > 0 && (
+                                                <button
+                                                    onClick={() => handleItemChange(index, 'name', '')}
+                                                    style={{
+                                                        position: 'absolute',
+                                                        right: '12px',
+                                                        background: 'rgba(255,255,255,0.1)',
+                                                        border: 'none',
+                                                        borderRadius: '50%',
+                                                        width: '24px',
+                                                        height: '24px',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        cursor: 'pointer',
+                                                        color: '#94a3b8'
+                                                    }}
+                                                >
+                                                    <X size={14} />
+                                                </button>
+                                            )}
+                                        </div>
 
                                         {/* AUTOCOMPLETE DROPDOWN */}
                                         {matchingSuggestions.length > 0 && (
