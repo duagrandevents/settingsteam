@@ -150,63 +150,8 @@ const TeamLanding = () => {
                     </div>
                 )}
 
-                {/* APP INFO MODAL */}
-                {showInfo && (
-                    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)', zIndex: 1100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-                        <div className="animate-fade-in" style={{ background: 'rgba(15, 23, 42, 0.95)', border: '1px solid rgba(59,130,246,0.3)', padding: '32px', borderRadius: '24px', width: '100%', maxWidth: '400px', maxHeight: '80vh', overflowY: 'auto' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
-                                <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 900, textTransform: 'uppercase' }}>App Updates</h3>
-                                <button onClick={() => setShowInfo(false)} style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer' }}><X size={24} /></button>
-                            </div>
-
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                                <div style={{ display: 'flex', gap: '16px' }}>
-                                    <div style={{ minWidth: '40px', height: '40px', borderRadius: '12px', background: 'rgba(59,130,246,0.1)', color: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Bell size={20} /></div>
-                                    <div>
-                                        <h4 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 700 }}>Real-time Alerts</h4>
-                                        <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8', lineHeight: 1.5 }}>Instant sound and banner notifications when new missions are assigned.</p>
-                                    </div>
-                                </div>
-
-                                <div style={{ display: 'flex', gap: '16px' }}>
-                                    <div style={{ minWidth: '40px', height: '40px', borderRadius: '12px', background: 'rgba(16,185,129,0.1)', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Download size={20} /></div>
-                                    <div>
-                                        <h4 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 700 }}>Universal Install</h4>
-                                        <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8', lineHeight: 1.5 }}>Optimized for iOS & Android. Tap "Install" to add to your home screen.</p>
-                                    </div>
-                                </div>
-
-                                <div style={{ display: 'flex', gap: '16px' }}>
-                                    <div style={{ minWidth: '40px', height: '40px', borderRadius: '12px', background: 'rgba(245,158,11,0.1)', color: '#f59e0b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Cloud size={20} /></div>
-                                    <div>
-                                        <h4 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 700 }}>Direct Sync</h4>
-                                        <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8', lineHeight: 1.5 }}>Reports sync directly to Admin Dashboard. No WhatsApp needed.</p>
-                                    </div>
-                                </div>
-
-                                <div style={{ display: 'flex', gap: '16px' }}>
-                                    <div style={{ minWidth: '40px', height: '40px', borderRadius: '12px', background: 'rgba(236,72,153,0.1)', color: '#ec4899', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Globe size={20} /></div>
-                                    <div>
-                                        <h4 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 700 }}>Offline Ready</h4>
-                                        <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8', lineHeight: 1.5 }}>Works in the background. Notifications arrive even when minimized.</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div style={{ marginTop: '32px', textAlign: 'center', fontSize: '11px', color: '#475569' }}>
-                                VERSION 2.1.0 • DUA SETTINGS TEAM
-                            </div>
-                        </div>
-                    </div>
-                )}
-
                 <div style={{ maxWidth: '500px', margin: '0 auto', padding: '24px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingLeft: '8px' }}>
-                        <h2 style={{ fontSize: '11px', fontWeight: 900, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.2em', margin: 0 }}>Active Missions</h2>
-                        <button onClick={() => setShowInfo(true)} style={{ background: 'transparent', border: 'none', color: '#3b82f6', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            <Info size={14} /> WHAT'S NEW
-                        </button>
-                    </div>
+                    <h2 style={{ fontSize: '11px', fontWeight: 900, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '24px', paddingLeft: '8px' }}>Active Missions</h2>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                         {loading ? (
