@@ -14,6 +14,8 @@ self.addEventListener('push', (event) => {
         icon: '/vite.svg',
         badge: '/vite.svg',
         vibrate: [200, 100, 200],
+        tag: 'mission-update',
+        renotify: true, // Crucial for playing sound on subsequent notifications
         data: { url: data.url || '/team' }
     };
 
