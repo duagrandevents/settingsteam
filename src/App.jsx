@@ -16,7 +16,8 @@ const NavBar = () => {
     // For now, let's keep TeamHeader for team, and maybe nothing or existing header for Admin?
     // The Admin pages have their own headers inside them.
 
-    if (isTeam) return <TeamHeader />;
+    const isTeamDomain = window.location.hostname.includes('team') || window.location.hostname.includes('settingsteam');
+    if (isTeam || isTeamDomain) return <TeamHeader />;
     return null;
 };
 
