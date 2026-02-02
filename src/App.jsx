@@ -21,7 +21,6 @@ const NavBar = () => {
 };
 
 // Handle routing based on domain (Admin vs Team)
-// Handle routing based on domain (Admin vs Team)
 const HomeRoute = () => {
     const isTeamDomain = window.location.hostname.includes('team') || window.location.hostname.includes('settingsteam');
     if (isTeamDomain) {
