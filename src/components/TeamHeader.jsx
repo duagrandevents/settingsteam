@@ -8,7 +8,7 @@ const TeamHeader = () => {
     const [showPopup, setShowPopup] = useState(false);
 
     const isOperationPage = location.pathname.includes('/outbound') || location.pathname.includes('/inbound');
-    const isLandingPage = location.pathname === '/' || location.pathname === '/team';
+    const isLandingPage = location.pathname === '/';
 
     const handleHeaderClick = () => {
         if (isOperationPage) setShowPopup(true);
