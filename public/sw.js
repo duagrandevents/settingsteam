@@ -11,8 +11,8 @@ self.addEventListener('push', (event) => {
     const title = data.title || 'New Mission Assigned!';
     const options = {
         body: data.body || 'You have a new site to visit.',
-        icon: '/vite.svg',
-        badge: '/vite.svg',
+        icon: '/logo.jpg',
+        badge: '/logo.jpg',
         vibrate: [200, 100, 200],
         tag: 'mission-update',
         renotify: true, // Crucial for playing sound on subsequent notifications
