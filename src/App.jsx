@@ -14,22 +14,11 @@ import { useNavigate } from 'react-router-dom';
 
 const NavBar = () => {
   const location = useLocation();
-  const navigate = useNavigate();
 
-  // DOMAIN DETECTION FOR SEPARATE PORTALS
-  const isTeamDomain = window.location.hostname.includes('settingsteam') || window.location.hostname.includes('vercel.app'); // Broader check for verified Team URLs if needed, but 'settingsteam' is key.
-  // Actually, 'includes' might be risky for admin if it's on vercel too.
-  // Let's stick to 'settingsteam' as per the user's setup.
-  const isTeamPortal = window.location.hostname.includes('settingsteam');
-
-  useEffect(() => {
-    if (isTeamPortal && location.pathname === '/') {
-      navigate('/team', { replace: true });
-    }
-  }, [isTeamPortal, location, navigate]);
-
-  const isAdmin = (location.pathname.startsWith('/admin') || location.pathname === '/') && !isTeamPortal;
-  const isTeam = location.pathname.startsWith('/team') || isTeamPortal; // Force Team Header on team portal
+  // Simple routing logic - if path starts with /team, it's team portal. Otherwise admin.
+  // This removes the complexity of domain checking that was blocking localhost.
+  const isTeam = location.pathname.startsWith('/team');
+  const isAdmin = !isTeam;
 
   if (isAdmin) {
     return (

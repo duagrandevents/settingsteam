@@ -94,7 +94,7 @@ const TeamLanding = () => {
                         <div style={{ textAlign: 'center', padding: '60px 24px', opacity: 0.5 }}>
                             <p style={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }} className="animate-pulse">Connecting to DUA HQ...</p>
                         </div>
-                    ) : sites && sites.length > 0 ? sites.map(site => (
+                    ) : Array.isArray(sites) && sites.length > 0 ? (sites || []).map(site => (
                         <div
                             key={site.id}
                             onClick={() => {
