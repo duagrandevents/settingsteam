@@ -20,17 +20,10 @@ const NavBar = () => {
   useEffect(() => {
     const hostname = window.location.hostname;
 
-    // 1. Team Domain: STRICTLY only allow /team routes
-    if (hostname.includes('settingsteam')) {
-      if (!location.pathname.startsWith('/team')) {
-        navigate('/team', { replace: true });
-      }
-    }
-
     // 2. Admin Domain: Delegate /team to external domain
     if (hostname.includes('settings-lilac')) {
       if (location.pathname.startsWith('/team')) {
-        window.location.href = 'https://settingsteam.vercel.app/team';
+        window.location.href = 'https://settingsteam.vercel.app/';
         return;
       }
 
