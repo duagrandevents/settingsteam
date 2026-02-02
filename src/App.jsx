@@ -16,16 +16,27 @@ const NavBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Strict Domain Redirect: ONLY for settingsteam domain
+  // Strict Domain Redirects
   useEffect(() => {
-    if (window.location.hostname.includes('settingsteam') && location.pathname === '/') {
+    const hostname = window.location.hostname;
+
+    // Team Domain -> Force /team
+    if (hostname.includes('settingsteam') && location.pathname === '/') {
       navigate('/team', { replace: true });
+    }
+
+    // Admin Domain -> Force /shabeeradmindua (or admin dashboard)
+    if (hostname.includes('settings-lilac') && location.pathname === '/') {
+      navigate('/shabeeradmindua', { replace: true });
     }
   }, [location, navigate]);
 
-  // Simple routing logic - if path starts with /team, it's team portal. Otherwise admin.
-  // This removes the complexity of domain checking that was blocking localhost.
-  const isTeam = location.pathname.startsWith('/team');
+  // Routing Logic
+  // If on team domain OR path starts with /team -> IT IS TEAM
+  const isTeamDomain = window.location.hostname.includes('settingsteam');
+  const isTeamPath = location.pathname.startsWith('/team');
+  const isTeam = isTeamDomain || isTeamPath;
+
   const isAdmin = !isTeam;
 
   if (isAdmin) {
@@ -36,13 +47,15 @@ const NavBar = () => {
             DUA SETTINGS ADMIN
           </div>
           <div className="flex bg-bg-surface p-1 rounded-lg border border-white/10">
-            <Link to="/admin" className="btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.825rem', borderRadius: '8px' }}>
+            <Link to="/shabeeradmindua" className="btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.825rem', borderRadius: '8px' }}>
               <LayoutDashboard size={14} /> <span className="hidden sm:inline">Admin</span>
             </Link>
             <a
               href="https://settingsteam.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="btn-secondary"
-              style={{ padding: '0.5rem 1rem', fontSize: '0.825rem', border: 'none', background: 'transparent', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+              style={{ padding: '0.5rem 1rem', fontSize: '0.825rem', border: 'none', background: 'transparent', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#94a3b8' }}
             >
               <Users size={14} /> <span className="hidden sm:inline">Team Portal</span>
             </a>
@@ -69,6 +82,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<AdminDashboard />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/shabeeradmindua" element={<AdminDashboard />} />
             <Route path="/admin/create-inventory" element={<AdminCreateInventory />} />
             <Route path="/admin/site/:siteId" element={<AdminSiteDetail />} />
 
