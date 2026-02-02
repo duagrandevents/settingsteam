@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import webpush from 'web-push';
 
-const supabaseUrl = process.env.VITE_SUPABASE_URL;
-const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = 'https://rstllmtiofeopdxfgpjj.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzdGxsbXRpb2Zlb3BkeGZncGpqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk4NDM2ODEsImV4cCI6MjA4NTQxOTY4MX0.kVcKi2bTyjiufEyJYWrr8aVJsz4kcufaFGxmzqsGTS4';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // VAPID Keys (Generated dynamically for this setup)
