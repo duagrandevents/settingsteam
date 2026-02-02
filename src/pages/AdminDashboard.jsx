@@ -4,14 +4,33 @@ import { useApp } from '../context/AppContext';
 import { Plus, Calendar, Package, ArrowRight, Trash2, LayoutDashboard } from 'lucide-react';
 
 const AdminDashboard = () => {
-    const { sites, deleteSite, loading } = useApp();
+    const { sites, deleteSite, loading, dbError } = useApp();
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const [newSite, setNewSite] = useState({ name: '', date: '' });
+    const [copied, setCopied] = useState(false);
 
     const handleCreateSite = (e) => {
         e.preventDefault();
         navigate('/admin/create-inventory', { state: newSite });
+    };
+
+    const sqlScript = `create table if not exists sites (
+  id uuid default gen_random_uuid() primary key,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  name text not null,
+  date text,
+  status text default 'assigned',
+  products jsonb default '[]'::jsonb
+);
+
+alter table sites disable row level security;
+alter publication supabase_realtime add table sites;`;
+
+    const handleCopySQL = () => {
+        navigator.clipboard.writeText(sqlScript);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
     };
 
     return (
@@ -30,19 +49,75 @@ const AdminDashboard = () => {
                 </h1>
                 <p style={{ color: '#94a3b8', fontSize: '16px', fontWeight: 500, margin: '0 0 24px 0' }}>Control Center & Live Ops</p>
 
-                <button
-                    onClick={() => setShowModal(true)}
-                    style={{
-                        background: 'linear-gradient(135deg, #3b82f6, #6366f1)',
-                        color: 'white', border: 'none', padding: '16px 40px',
-                        borderRadius: '100px', fontSize: '18px', fontWeight: 700,
-                        cursor: 'pointer', boxShadow: '0 10px 30px rgba(59, 130, 246, 0.4)',
-                        display: 'inline-flex', alignItems: 'center', gap: '8px'
-                    }}
-                >
-                    <Plus size={24} /> Deploy New Site
-                </button>
+                {!dbError && (
+                    <button
+                        onClick={() => setShowModal(true)}
+                        style={{
+                            background: 'linear-gradient(135deg, #3b82f6, #6366f1)',
+                            color: 'white', border: 'none', padding: '16px 40px',
+                            borderRadius: '100px', fontSize: '18px', fontWeight: 700,
+                            cursor: 'pointer', boxShadow: '0 10px 30px rgba(59, 130, 246, 0.4)',
+                            display: 'inline-flex', alignItems: 'center', gap: '8px'
+                        }}
+                    >
+                        <Plus size={24} /> Deploy New Site
+                    </button>
+                )}
             </header>
+
+            {/* ERROR / SETUP NOTICES */}
+            <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 24px' }}>
+                {dbError && (dbError.code === 'PGRST116' || dbError.code === 'PGRST205' || dbError.message?.includes('relation "sites" does not exist')) && (
+                    <div style={{
+                        background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)',
+                        borderRadius: '24px', padding: '32px', marginTop: '32px', textAlign: 'center'
+                    }}>
+                        <div style={{ background: 'rgba(239, 68, 68, 0.1)', width: '64px', height: '64px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+                            <Package size={32} color="#ef4444" />
+                        </div>
+                        <h2 style={{ fontSize: '24px', fontWeight: 900, textTransform: 'uppercase', marginBottom: '8px' }}>Database Table Missing</h2>
+                        <p style={{ color: '#94a3b8', marginBottom: '24px' }}>The "sites" table wasn't found in your Supabase project. Let's fix that now.</p>
+
+                        <div style={{ position: 'relative', background: 'rgba(0,0,0,0.3)', padding: '20px', borderRadius: '12px', textAlign: 'left', marginBottom: '24px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                            <pre style={{ margin: 0, fontSize: '11px', color: '#60a5fa', overflowX: 'auto' }}>
+                                {sqlScript}
+                            </pre>
+                            <button
+                                onClick={handleCopySQL}
+                                style={{
+                                    position: 'absolute', top: '10px', right: '10px',
+                                    background: copied ? '#10b981' : 'rgba(255,255,255,0.1)',
+                                    color: 'white', border: 'none', padding: '8px 16px',
+                                    borderRadius: '8px', fontSize: '12px', fontWeight: 700, cursor: 'pointer'
+                                }}
+                            >
+                                {copied ? 'COPIED!' : 'COPY SQL'}
+                            </button>
+                        </div>
+
+                        <p style={{ fontSize: '14px', color: '#f8fafc' }}>
+                            <strong>How to fix:</strong> Open your <a href="https://supabase.com/dashboard" target="_blank" rel="noreferrer" style={{ color: '#3b82f6' }}>Supabase Dashboard</a>, go to <strong>SQL Editor</strong>, paste this code, and click <strong>Run</strong>.
+                        </p>
+                    </div>
+                )}
+
+                {dbError && !(dbError.code === 'PGRST116' || dbError.code === 'PGRST205' || dbError.message?.includes('relation "sites" does not exist')) && (
+                    <div style={{
+                        background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)',
+                        borderRadius: '24px', padding: '32px', marginTop: '32px', textAlign: 'center'
+                    }}>
+                        <h2 style={{ fontSize: '24px', fontWeight: 900, textTransform: 'uppercase', marginBottom: '8px' }}>Connection Error</h2>
+                        <p style={{ color: '#94a3b8', marginBottom: '16px' }}>Supabase returned an error. Please check your credentials in <code>src/supabaseClient.js</code>.</p>
+                        <div style={{ background: 'rgba(0,0,0,0.3)', padding: '16px', borderRadius: '12px', textAlign: 'left', border: '1px solid rgba(239,68,68,0.2)' }}>
+                            <p style={{ margin: '0 0 8px 0', fontSize: '12px', fontWeight: 700, color: '#ef4444' }}>ERROR DETAILS:</p>
+                            <pre style={{ margin: 0, fontSize: '12px', color: 'white', whiteSpace: 'pre-wrap' }}>
+                                {dbError.message || JSON.stringify(dbError)}
+                                {dbError.code && ` (Code: ${dbError.code})`}
+                            </pre>
+                        </div>
+                    </div>
+                )}
+            </div>
 
             {/* SITES GRID */}
             <div style={{
@@ -54,7 +129,7 @@ const AdminDashboard = () => {
                     <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px', opacity: 0.5 }}>
                         <div className="animate-pulse" style={{ fontSize: '24px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Connecting to Cloud...</div>
                     </div>
-                ) : sites && sites.length > 0 ? sites.map(site => (
+                ) : !dbError && sites && sites.length > 0 ? sites.map(site => (
                     <div
                         key={site.id}
                         style={{

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Truck, Save, LogOut } from 'lucide-react';
+import { Truck, Save, LogOut, Phone } from 'lucide-react';
 
 const TeamHeader = () => {
     const navigate = useNavigate();
@@ -44,6 +44,21 @@ const TeamHeader = () => {
                         DUA SETTINGS TEAM
                     </h1>
                 </div>
+
+                <a
+                    href="tel:+918606339671"
+                    style={{
+                        padding: '10px', background: 'rgba(16, 185, 129, 0.1)',
+                        border: '1px solid rgba(16, 185, 129, 0.2)',
+                        borderRadius: '50%', color: '#10b981', display: 'flex',
+                        alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+                        boxShadow: '0 4px 12px rgba(16, 185, 129, 0.2)'
+                    }}
+                    title="CALL HQ"
+                >
+                    <Phone size={20} fill="currentColor" style={{ opacity: 0.2, position: 'absolute' }} />
+                    <Phone size={20} />
+                </a>
             </header>
 
             {/* EXIT CONFIRMATION MODAL */}

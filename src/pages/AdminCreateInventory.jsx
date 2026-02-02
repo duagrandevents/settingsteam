@@ -1,16 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { Save, Plus, Trash2, ArrowLeft, Package, Check } from 'lucide-react';
+import { Save, Plus, Trash2, ArrowLeft, Package, Check, X } from 'lucide-react';
 
 const AdminCreateInventory = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { addSite } = useApp();
+    const { addSite, sites } = useApp();
     const siteDetails = location.state || {};
 
     const [items, setItems] = useState([{ name: '', count: '' }]);
     const [isSaving, setIsSaving] = useState(false);
+    const [focusedIndex, setFocusedIndex] = useState(null);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+
+    // Derive historical product names for autocomplete
+    const [allProductNames, setAllProductNames] = useState([]);
+
+    useEffect(() => {
+        const names = new Set();
+        sites.forEach(site => {
+            (site.products || []).forEach(p => {
+                if (p.name) names.add(p.name.toUpperCase());
+            });
+        });
+        setAllProductNames(Array.from(names).sort());
+    }, [sites]);
 
     useEffect(() => {
         if (!siteDetails.name) {
@@ -20,8 +35,20 @@ const AdminCreateInventory = () => {
 
     const handleItemChange = (index, field, value) => {
         const newItems = [...items];
-        newItems[index][field] = value;
+        newItems[index][field] = field === 'name' ? value.toUpperCase() : value;
         setItems(newItems);
+
+        if (field === 'name') {
+            setFocusedIndex(index);
+            setShowSuggestions(value.length > 0);
+        }
+    };
+
+    const selectSuggestion = (index, name) => {
+        const newItems = [...items];
+        newItems[index].name = name;
+        setItems(newItems);
+        setShowSuggestions(false);
     };
 
     const addItemRow = () => {
@@ -31,6 +58,8 @@ const AdminCreateInventory = () => {
     const removeItemRow = (index) => {
         if (items.length > 1) {
             setItems(items.filter((_, i) => i !== index));
+        } else {
+            setItems([{ name: '', count: '' }]);
         }
     };
 
@@ -46,15 +75,20 @@ const AdminCreateInventory = () => {
                 isNew: false
             }));
 
-        addSite({
+        const { error } = await addSite({
             name: siteDetails.name,
             date: siteDetails.date,
             products: products
         });
 
-        setTimeout(() => {
-            navigate('/admin');
-        }, 1200);
+        if (error) {
+            setIsSaving(false);
+            alert('DEPLOYMENT FAILED: ' + (error.message || 'Check your database connection.'));
+        } else {
+            setTimeout(() => {
+                navigate('/admin');
+            }, 1200);
+        }
     };
 
     return (
@@ -88,37 +122,77 @@ const AdminCreateInventory = () => {
             </header>
 
             <div style={{ padding: '32px 24px', maxWidth: '800px', margin: '0 auto' }}>
-                <div style={{ background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '24px', overflow: 'hidden' }}>
+                <div style={{ background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '24px', overflow: 'visible' }}>
                     <div style={{ padding: '20px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', gap: '12px', alignItems: 'center' }}>
                         <Package size={20} color="#3b82f6" />
                         <h3 style={{ fontSize: '14px', fontWeight: 900, textTransform: 'uppercase', margin: 0 }}>Item List</h3>
                     </div>
 
                     <div style={{ padding: '24px' }}>
-                        {items.map((item, index) => (
-                            <div key={index} style={{ display: 'flex', gap: '12px', marginBottom: '12px', alignItems: 'center' }}>
-                                <div style={{ flex: 1 }}>
-                                    <input
-                                        placeholder="ITEM NAME (E.G. CHAIRS)"
-                                        value={item.name}
-                                        onChange={e => handleItemChange(index, 'name', e.target.value)}
-                                        style={{ background: 'rgba(2, 6, 23, 0.5)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '16px', borderRadius: '12px', width: '100%', fontSize: '16px', fontWeight: 700 }}
-                                    />
+                        {items.map((item, index) => {
+                            const matchingSuggestions = showSuggestions && focusedIndex === index
+                                ? allProductNames.filter(n => n.includes(item.name.toUpperCase()) && n !== item.name.toUpperCase()).slice(0, 5)
+                                : [];
+
+                            return (
+                                <div key={index} style={{ display: 'flex', gap: '12px', marginBottom: '16px', alignItems: 'center', position: 'relative' }}>
+                                    <div style={{ flex: 1, position: 'relative' }}>
+                                        <input
+                                            placeholder="ITEM NAME (E.G. CHAIRS)"
+                                            value={item.name}
+                                            onFocus={() => { setFocusedIndex(index); setShowSuggestions(item.name.length > 0); }}
+                                            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                                            onChange={e => handleItemChange(index, 'name', e.target.value)}
+                                            style={{ background: 'rgba(2, 6, 23, 0.5)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '16px', borderRadius: '12px', width: '100%', fontSize: '16px', fontWeight: 700, textTransform: 'uppercase' }}
+                                        />
+
+                                        {/* AUTOCOMPLETE DROPDOWN */}
+                                        {matchingSuggestions.length > 0 && (
+                                            <div style={{
+                                                position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 10,
+                                                background: '#1e293b', borderRadius: '12px', marginTop: '4px',
+                                                border: '1px solid rgba(255,255,255,0.1)', overflow: 'hidden',
+                                                boxShadow: '0 10px 25px rgba(0,0,0,0.5)'
+                                            }}>
+                                                {matchingSuggestions.map((suggestion, i) => (
+                                                    <div
+                                                        key={i}
+                                                        onClick={() => selectSuggestion(index, suggestion)}
+                                                        style={{ padding: '12px 16px', cursor: 'pointer', borderBottom: i < matchingSuggestions.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none', fontWeight: 700, fontSize: '14px' }}
+                                                        onMouseOver={e => e.currentTarget.style.background = 'rgba(59, 130, 246, 0.2)'}
+                                                        onMouseOut={e => e.currentTarget.style.background = 'transparent'}
+                                                    >
+                                                        {suggestion}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div style={{ width: '100px' }}>
+                                        <input
+                                            type="number"
+                                            placeholder="0"
+                                            value={item.count}
+                                            onChange={e => handleItemChange(index, 'count', e.target.value)}
+                                            style={{ background: 'rgba(2, 6, 23, 0.5)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '16px', borderRadius: '12px', width: '100%', textAlign: 'center', fontSize: '16px', fontWeight: 700 }}
+                                        />
+                                    </div>
+                                    <button
+                                        onClick={() => removeItemRow(index)}
+                                        style={{
+                                            background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)',
+                                            color: '#ef4444', height: '54px', width: '54px',
+                                            borderRadius: '12px', cursor: 'pointer', display: 'flex',
+                                            alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s'
+                                        }}
+                                        onMouseOver={e => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)'; e.currentTarget.style.transform = 'scale(1.05)'; }}
+                                        onMouseOut={e => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'; e.currentTarget.style.transform = 'scale(1)'; }}
+                                    >
+                                        <X size={20} />
+                                    </button>
                                 </div>
-                                <div style={{ width: '100px' }}>
-                                    <input
-                                        type="number"
-                                        placeholder="0"
-                                        value={item.count}
-                                        onChange={e => handleItemChange(index, 'count', e.target.value)}
-                                        style={{ background: 'rgba(2, 6, 23, 0.5)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '16px', borderRadius: '12px', width: '100%', textAlign: 'center', fontSize: '16px', fontWeight: 700 }}
-                                    />
-                                </div>
-                                <button onClick={() => removeItemRow(index)} style={{ background: 'rgba(239, 68, 68, 0.1)', border: 'none', color: '#ef4444', padding: '16px', borderRadius: '12px', cursor: 'pointer' }}>
-                                    <Trash2 size={20} />
-                                </button>
-                            </div>
-                        ))}
+                            );
+                        })}
 
                         <button onClick={addItemRow} style={{ width: '100%', padding: '16px', background: 'rgba(255,255,255,0.03)', border: '2px dashed rgba(255,255,255,0.1)', color: '#94a3b8', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '12px' }}>
                             <Plus size={20} /> ADD ANOTHER ITEM
@@ -133,7 +207,7 @@ const AdminCreateInventory = () => {
                         <div style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.2)', padding: '30px', borderRadius: '100px', display: 'inline-block', marginBottom: '24px' }}>
                             <Check size={64} color="#3b82f6" />
                         </div>
-                        <h2 style={{ fontSize: '36px', fontWeight: 900, textTransform: 'uppercase', italic: 'true' }}>MISSION DEPLOYED!</h2>
+                        <h2 style={{ fontSize: '36px', fontWeight: 900, textTransform: 'uppercase' }}>MISSION DEPLOYED!</h2>
                         <p style={{ color: '#94a3b8', fontWeight: 500, marginTop: '8px' }}>Inventory assigned to site database.</p>
                     </div>
                 </div>
