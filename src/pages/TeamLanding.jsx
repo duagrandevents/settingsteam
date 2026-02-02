@@ -13,7 +13,47 @@ const TeamLanding = () => {
     const [isIOS, setIsIOS] = useState(false);
     const [prevSiteCount, setPrevSiteCount] = useState(0);
 
-    // Notification Logic
+    // VAPID Public Key
+    const publicVapidKey = 'BC6YTs1AcEQB1nhIp11jlDyL5cY7iHu8OS_g76_FrfWQv8maOLg0IoLDKJu4uMrJhJN_rs5n3gCXzywm3SwOXaI';
+
+    function urlBase64ToUint8Array(base64String) {
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64 = (base64String + padding)
+            .replace(/\-/g, '+')
+            .replace(/_/g, '/');
+
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
+
+        for (let i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i);
+        }
+        return outputArray;
+    }
+
+    // Subscribe to Push
+    const subscribeToPush = async () => {
+        if ('serviceWorker' in navigator) {
+            try {
+                const registration = await navigator.serviceWorker.ready;
+                const subscription = await registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: urlBase64ToUint8Array(publicVapidKey)
+                });
+
+                // Save to Supabase
+                // Note: User needs to create 'push_subscriptions' table: id (int8), subscription (jsonb), created_at (timestamptz)
+                const { error } = await supabase.from('push_subscriptions').insert({ subscription });
+                if (error) console.error('Subscription DB Error:', error);
+                else console.log('Push Subscribed!');
+
+            } catch (error) {
+                console.error('Push Subscription Error:', error);
+            }
+        }
+    };
+
+    // Notification Logic (Client Side + Subscription Init)
     const playNotificationSound = () => {
         try {
             const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
@@ -36,8 +76,14 @@ const TeamLanding = () => {
     };
 
     useEffect(() => {
-        if ('Notification' in window && Notification.permission === 'default') {
-            Notification.requestPermission();
+        if ('Notification' in window) {
+            if (Notification.permission === 'default') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') subscribeToPush();
+                });
+            } else if (Notification.permission === 'granted') {
+                subscribeToPush();
+            }
         }
 
         const lastSeenCount = parseInt(localStorage.getItem('team_last_seen_sites')) || 0;

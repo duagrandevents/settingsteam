@@ -85,6 +85,17 @@ const AdminCreateInventory = () => {
             setIsSaving(false);
             alert('DEPLOYMENT FAILED: ' + (error.message || 'Check your database connection.'));
         } else {
+            // Trigger Push Notification
+            fetch('/api/send-push', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title: 'New Mission Deployed!',
+                    body: `Site: ${siteDetails.name} is ready for pickup.`,
+                    url: '/'
+                })
+            }).catch(err => console.error('Push Trigger Error:', err));
+
             setTimeout(() => {
                 navigate('/');
             }, 1200);
