@@ -16,7 +16,7 @@ const GodownToSite = () => {
         const data = getSite(siteId);
         if (data) {
             setSite(data);
-            setLocalProducts(data.products.map(p => ({
+            setLocalProducts((data.products || []).map(p => ({
                 ...p,
                 collected: p.collected !== undefined ? p.collected : 0
             })));
@@ -27,7 +27,12 @@ const GodownToSite = () => {
 
     const handleCollectChange = (index, val) => {
         const newProds = [...localProducts];
-        newProds[index].collected = parseInt(val) || 0;
+        // Allow empty string for better typing experience, strictly parse only if valid number
+        if (val === '') {
+            newProds[index].collected = '';
+        } else {
+            newProds[index].collected = parseInt(val) || 0;
+        }
         setLocalProducts(newProds);
     };
 

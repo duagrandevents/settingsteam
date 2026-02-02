@@ -110,7 +110,7 @@ const TeamLanding = () => {
                                 <div>
                                     <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 900, textTransform: 'uppercase' }}>{site.name}</h3>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#64748b', marginTop: '4px', fontWeight: 700 }}>
-                                        <span>{site.date.split('-').reverse().join('-')}</span>
+                                        <span>{site.date ? site.date.split('-').reverse().join('-') : 'No Date'}</span>
                                         <div style={{ width: '4px', height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '50%' }}></div>
                                         <span style={{
                                             color: site.status === 'completed' ? '#10b981' :

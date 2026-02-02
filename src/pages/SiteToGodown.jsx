@@ -14,7 +14,7 @@ const SiteToGodown = () => {
         const data = getSite(siteId);
         if (data) {
             setSite(data);
-            setReturnItems(data.products.map(p => ({
+            setReturnItems((data.products || []).map(p => ({
                 ...p,
                 returned: p.returned !== undefined ? p.returned : 0
             })));
@@ -25,7 +25,11 @@ const SiteToGodown = () => {
 
     const handleReturnChange = (index, val) => {
         const newItems = [...returnItems];
-        newItems[index].returned = parseInt(val) || 0;
+        if (val === '') {
+            newItems[index].returned = '';
+        } else {
+            newItems[index].returned = parseInt(val) || 0;
+        }
         setReturnItems(newItems);
     };
 
