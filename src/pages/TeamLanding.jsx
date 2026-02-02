@@ -125,34 +125,53 @@ const TeamLanding = () => {
                                 </div>
                             </div>
 
-                            <div style={{ display: 'flex', gap: '10px' }}>
+                            {(!site.status || site.status === 'assigned') ? (
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         navigate(`/site/${site.id}/outbound`);
                                     }}
                                     style={{
-                                        flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid rgba(59, 130, 246, 0.3)',
-                                        background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6', fontWeight: 700, cursor: 'pointer',
-                                        textTransform: 'uppercase', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
+                                        width: '100%', padding: '16px', borderRadius: '16px', border: 'none',
+                                        background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                                        color: 'white', fontWeight: 900, cursor: 'pointer',
+                                        textTransform: 'uppercase', fontSize: '14px', letterSpacing: '0.05em',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+                                        boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)'
                                     }}
                                 >
-                                    <Truck size={14} /> From Godown
+                                    <Truck size={20} /> START MISSION
                                 </button>
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        navigate(`/site/${site.id}/inbound`);
-                                    }}
-                                    style={{
-                                        flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid rgba(16, 185, 129, 0.3)',
-                                        background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', fontWeight: 700, cursor: 'pointer',
-                                        textTransform: 'uppercase', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
-                                    }}
-                                >
-                                    <Package size={14} /> From Site
-                                </button>
-                            </div>
+                            ) : (
+                                <div style={{ display: 'flex', gap: '10px' }}>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            navigate(`/site/${site.id}/outbound`);
+                                        }}
+                                        style={{
+                                            flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid rgba(59, 130, 246, 0.3)',
+                                            background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6', fontWeight: 700, cursor: 'pointer',
+                                            textTransform: 'uppercase', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
+                                        }}
+                                    >
+                                        <Truck size={14} /> From Godown
+                                    </button>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            navigate(`/site/${site.id}/inbound`);
+                                        }}
+                                        style={{
+                                            flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid rgba(16, 185, 129, 0.3)',
+                                            background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', fontWeight: 700, cursor: 'pointer',
+                                            textTransform: 'uppercase', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
+                                        }}
+                                    >
+                                        <Package size={14} /> From Site
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     )) : (
                         <div style={{ textAlign: 'center', padding: '60px 24px', borderRadius: '24px', border: '2px dashed rgba(255,255,255,0.1)', opacity: 0.5 }}>
