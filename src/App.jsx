@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import AdminDashboard from './pages/AdminDashboard';
@@ -14,6 +14,14 @@ import { useNavigate } from 'react-router-dom';
 
 const NavBar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  // Strict Domain Redirect: ONLY for settingsteam domain
+  useEffect(() => {
+    if (window.location.hostname.includes('settingsteam') && location.pathname === '/') {
+      navigate('/team', { replace: true });
+    }
+  }, [location, navigate]);
 
   // Simple routing logic - if path starts with /team, it's team portal. Otherwise admin.
   // This removes the complexity of domain checking that was blocking localhost.
