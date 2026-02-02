@@ -11,6 +11,7 @@ const GodownToSite = () => {
     const [localProducts, setLocalProducts] = useState([]);
     const [newProduct, setNewProduct] = useState({ name: '', count: '' });
     const [showAdd, setShowAdd] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
 
     useEffect(() => {
         const data = getSite(siteId);
@@ -49,22 +50,20 @@ const GodownToSite = () => {
     };
 
     const handleSave = () => {
-        // Save to global state
-        updateSite(siteId, {
+        setShowConfirm(true);
+    };
+
+    const handleFinalSave = async () => {
+        // Save to global state (and Supabase via AppContext)
+        await updateSite(siteId, {
             products: localProducts,
             status: 'outbound_complete'
         });
 
-        // Generate WhatsApp Message
-        let message = `*Stock Picked Report for ${site.name}*\n\n`;
-        localProducts.forEach(p => {
-            message += `${p.name}: ${p.collected}/${p.count} ${p.collected === p.count ? '✅' : '⚠️'}\n`;
-        });
-        const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
-        window.open(url, '_blank');
-
-        // Navigate
-        navigate(`/site/${siteId}/inbound`); // "The page turns to site to godown"
+        // Navigate directly to From Site (Inbound) page
+        // No WhatsApp redirect
+        setShowConfirm(false);
+        navigate(`/site/${siteId}/inbound`);
     };
 
     return (
@@ -135,7 +134,7 @@ const GodownToSite = () => {
                 </div>
             </div>
 
-            {showAdd ? (
+            {showAdd && (
                 <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
                     <div className="glass-panel p-6 w-full max-w-sm">
                         <h3 className="text-lg font-bold mb-4">Add Extra Product</h3>
@@ -158,7 +157,37 @@ const GodownToSite = () => {
                         </div>
                     </div>
                 </div>
-            ) : (
+            )}
+
+            {showConfirm && (
+                <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+                    <div style={{ background: 'rgba(15, 23, 42, 0.95)', border: '1px solid rgba(255,255,255,0.1)', padding: '32px', borderRadius: '24px', width: '100%', maxWidth: '360px', textAlign: 'center' }}>
+                        <div style={{ width: '64px', height: '64px', background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+                            <Save size={32} />
+                        </div>
+                        <h3 style={{ margin: '0 0 12px 0', fontSize: '20px', fontWeight: 900 }}>SUBMIT TO ADMIN?</h3>
+                        <p style={{ margin: '0 0 24px 0', fontSize: '14px', color: '#94a3b8', lineHeight: 1.5 }}>
+                            This will sync the picked list to the HQ Dashboard for printing. WhatsApp sharing is disabled.
+                        </p>
+                        <div style={{ display: 'flex', gap: '12px' }}>
+                            <button
+                                onClick={() => setShowConfirm(false)}
+                                style={{ flex: 1, padding: '14px', borderRadius: '14px', background: 'rgba(255,255,255,0.05)', color: '#94a3b8', fontWeight: 700, cursor: 'pointer', border: 'none' }}
+                            >
+                                CANCEL
+                            </button>
+                            <button
+                                onClick={handleFinalSave}
+                                style={{ flex: 1, padding: '14px', borderRadius: '14px', background: '#3b82f6', color: 'white', fontWeight: 700, cursor: 'pointer', border: 'none' }}
+                            >
+                                CONFIRM
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {!showAdd && (
                 <button
                     onClick={() => setShowAdd(true)}
                     className="fixed bottom-6 right-6 btn-primary rounded-full w-14 h-14 flex items-center justify-center shadow-lg"
