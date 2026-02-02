@@ -139,7 +139,7 @@ alter publication supabase_realtime add table sites;`;
                             display: 'flex', flexDirection: 'column', gap: '16px',
                             transition: 'all 0.2s', boxShadow: '0 10px 20px rgba(0,0,0,0.2)'
                         }}
-                        onClick={() => navigate(`/admin/site/${site.id}`)}
+                        onClick={() => navigate(`/site/${site.id}`)}
                         onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.3)'; }}
                         onMouseOut={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)'; }}
                     >

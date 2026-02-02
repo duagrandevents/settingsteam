@@ -28,8 +28,7 @@ const App = () => {
                     <Routes>
                         {/* Admin Routes */}
                         <Route path="/" element={<AdminDashboard />} />
-                        <Route path="/shabeeradmindua" element={<AdminDashboard />} />
-                        <Route path="/shabeeradmindua/site/:siteId" element={<AdminSiteDetail />} />
+                        <Route path="/site/:siteId" element={<AdminSiteDetail />} />
 
                         {/* Team Routes */}
                         <Route path="/team" element={<TeamLanding />} />

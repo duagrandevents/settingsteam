@@ -33,7 +33,7 @@ const AdminSiteDetail = () => {
                 <AlertTriangle size={48} style={{ margin: '0 auto 16px', color: '#ef4444' }} />
                 <h2 style={{ fontSize: '24px', fontWeight: 900, textTransform: 'uppercase', color: 'white' }}>Site Not Found</h2>
                 <p style={{ margin: '8px 0 24px' }}>The requested deployment could not be located.</p>
-                <button onClick={() => navigate('/admin')} style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '12px 32px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}>BACK TO DASHBOARD</button>
+                <button onClick={() => navigate('/')} style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '12px 32px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}>BACK TO DASHBOARD</button>
             </div>
         );
     }
@@ -80,7 +80,7 @@ const AdminSiteDetail = () => {
                 padding: '30px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between'
             }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                    <button onClick={() => navigate('/admin')} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'white', padding: '12px', borderRadius: '12px', cursor: 'pointer' }}>
+                    <button onClick={() => navigate('/')} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'white', padding: '12px', borderRadius: '12px', cursor: 'pointer' }}>
                         <ArrowLeft size={24} />
                     </button>
                     <div>
