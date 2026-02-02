@@ -44,18 +44,26 @@ const AdminSiteDetail = () => {
         setIsEditing(false);
     };
 
+
+
     const handleShareReport = (type) => {
         const title = type === 'collection' ? 'COLLECTION REPORT' : 'RETURN REPORT';
         let reportText = `*${title} - ${site.name}*\nDate: ${site.date}\n\n`;
 
         editProducts.forEach(p => {
             const taken = p.collected || 0;
+            const target = p.count || 0;
             const returned = p.returned || 0;
+
             if (type === 'collection') {
-                reportText += `- ${p.name}: ${taken}\n`;
+                if (target > 0 || taken > 0) {
+                    reportText += `- ${p.name}: ${taken}/${target} ${taken >= target ? '✅' : '⚠️'}\n`;
+                }
             } else {
                 const missing = taken - returned;
-                reportText += `- ${p.name}: Taken ${taken}, Ret ${returned}${missing > 0 ? ` (*MISSING ${missing}*)` : ''}\n`;
+                if (taken > 0 || returned > 0) {
+                    reportText += `- ${p.name}: Taken ${taken}, Ret ${returned}${missing > 0 ? ` (*MISSING ${missing}*) ⚠️` : ' ✅'}\n`;
+                }
             }
         });
 
