@@ -1,40 +1,41 @@
-
-const CACHE_NAME = 'dua-setting-v1';
-const urlsToCache = [
-    '/',
-    '/index.html',
-    '/manifest.json',
-    '/vite.svg'
-];
-
 self.addEventListener('install', (event) => {
+    self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+    event.waitUntil(self.clients.claim());
+});
+
+self.addEventListener('push', (event) => {
+    const data = event.data ? event.data.json() : {};
+    const title = data.title || 'New Mission Assigned!';
+    const options = {
+        body: data.body || 'You have a new site to visit.',
+        icon: '/vite.svg',
+        badge: '/vite.svg',
+        vibrate: [200, 100, 200],
+        data: { url: data.url || '/team' }
+    };
+
     event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then((cache) => cache.addAll(urlsToCache))
+        self.registration.showNotification(title, options)
     );
 });
 
-self.addEventListener('fetch', (event) => {
-    event.respondWith(
-        caches.match(event.request)
-            .then((response) => response || fetch(event.request))
-    );
-});
-
-// Listener for notification clicks
 self.addEventListener('notificationclick', (event) => {
     event.notification.close();
     event.waitUntil(
-        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-            // If a window is already open, focus it
-            for (constclient of clientList) {
-                if (client.url && 'focus' in client) {
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+            // Check if there is already a window/tab open with the target URL
+            for (let i = 0; i < windowClients.length; i++) {
+                const client = windowClients[i];
+                if (client.url === '/' && 'focus' in client) {
                     return client.focus();
                 }
             }
-            // Otherwise open a new window
+            // If not, open a new window/tab
             if (clients.openWindow) {
-                return clients.openWindow('/');
+                return clients.openWindow(event.notification.data.url);
             }
         })
     );

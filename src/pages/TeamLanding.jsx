@@ -25,40 +25,12 @@ const TeamLanding = () => {
 
     const triggerNotification = (siteName) => {
         playNotificationSound();
-
-        // Android Vibration
-        if ('vibrate' in navigator) {
-            navigator.vibrate([200, 100, 200]);
-        }
-
         if (Notification.permission === 'granted') {
-            try {
-                // Service Worker-based notification (if configured) or generic
-                // Note: on Mobile, using registration.showNotification is more reliable for PWAs
-                if (navigator.serviceWorker && navigator.serviceWorker.ready) {
-                    navigator.serviceWorker.ready.then(registration => {
-                        registration.showNotification('New Mission Assigned!', {
-                            body: `${siteName} has been added to your list.`,
-                            icon: '/vite.svg',
-                            vibrate: [200, 100, 200],
-                            tag: 'mission-alert',
-                            renotify: true,
-                            data: { url: '/' }
-                        });
-                    });
-                } else {
-                    // Fallback to classic API
-                    new Notification('New Mission Assigned!', {
-                        body: `${siteName} has been added to your list.`,
-                        icon: '/vite.svg',
-                        vibrate: [200, 100, 200],
-                        tag: 'mission-alert',
-                        renotify: true
-                    });
-                }
-            } catch (e) {
-                console.error('Notification Error:', e);
-            }
+            new Notification('New Mission Assigned!', {
+                body: `${siteName} has been added to your list.`,
+                icon: '/vite.svg',
+                vibrate: [200, 100, 200]
+            });
         }
         setShowNotification(true);
     };

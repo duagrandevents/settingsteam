@@ -43,7 +43,7 @@ const App = () => {
                         <Route path="/site/:siteId" element={<AdminSiteDetail />} />
 
                         {/* Team Routes */}
-
+                        <Route path="/team" element={<TeamLanding />} />
                         <Route path="/site/:siteId/outbound" element={<GodownToSite />} />
                         <Route path="/site/:siteId/inbound" element={<SiteToGodown />} />
 
