@@ -12,7 +12,7 @@ const AdminDashboard = () => {
 
     const handleCreateSite = (e) => {
         e.preventDefault();
-        navigate('/admin/create-inventory', { state: newSite });
+        navigate('/create-inventory', { state: newSite });
     };
 
     const sqlScript = `create table if not exists sites (
@@ -40,43 +40,30 @@ alter publication supabase_realtime add table sites;`;
                 position: 'sticky', top: 0, zIndex: 100,
                 background: 'rgba(2, 6, 23, 0.95)', backdropFilter: 'blur(12px)',
                 borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-                padding: '40px 24px', textAlign: 'center'
+                padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between'
             }}>
-                <h1 style={{ margin: '0 0 8px 0', fontSize: '32px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                    <span style={{ background: 'linear-gradient(to right, #3b82f6, #6366f1, #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                        DUA SETTINGS ADMIN
-                    </span>
-                </h1>
-                <p style={{ color: '#94a3b8', fontSize: '16px', fontWeight: 500, margin: '0 0 24px 0' }}>Control Center & Live Ops</p>
-
-                {!dbError && (
-                    <button
-                        onClick={() => setShowModal(true)}
-                        style={{
-                            background: 'linear-gradient(135deg, #3b82f6, #6366f1)',
-                            color: 'white', border: 'none', padding: '16px 40px',
-                            borderRadius: '100px', fontSize: '18px', fontWeight: 700,
-                            cursor: 'pointer', boxShadow: '0 10px 30px rgba(59, 130, 246, 0.4)',
-                            display: 'inline-flex', alignItems: 'center', gap: '8px'
-                        }}
-                    >
-                        <Plus size={24} /> Deploy New Site
-                    </button>
-                )}
+                <div>
+                    <h1 style={{ margin: 0, fontSize: '20px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        <span style={{ background: 'linear-gradient(to right, #3b82f6, #6366f1, #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                            DUA ADMIN
+                        </span>
+                    </h1>
+                    <p style={{ color: '#94a3b8', fontSize: '10px', fontWeight: 700, margin: '2px 0 0 0', textTransform: 'uppercase' }}>Control Center</p>
+                </div>
             </header>
 
             {/* ERROR / SETUP NOTICES */}
-            <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 24px' }}>
+            <div style={{ maxWidth: '500px', margin: '0 auto', padding: '0 24px' }}>
                 {dbError && (dbError.code === 'PGRST116' || dbError.code === 'PGRST205' || dbError.message?.includes('relation "sites" does not exist')) && (
                     <div style={{
                         background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)',
-                        borderRadius: '24px', padding: '32px', marginTop: '32px', textAlign: 'center'
+                        borderRadius: '24px', padding: '24px', marginTop: '32px', textAlign: 'center'
                     }}>
                         <div style={{ background: 'rgba(239, 68, 68, 0.1)', width: '64px', height: '64px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
                             <Package size={32} color="#ef4444" />
                         </div>
-                        <h2 style={{ fontSize: '24px', fontWeight: 900, textTransform: 'uppercase', marginBottom: '8px' }}>Database Table Missing</h2>
-                        <p style={{ color: '#94a3b8', marginBottom: '24px' }}>The "sites" table wasn't found in your Supabase project. Let's fix that now.</p>
+                        <h2 style={{ fontSize: '20px', fontWeight: 900, textTransform: 'uppercase', marginBottom: '8px' }}>Database Error</h2>
+                        <p style={{ color: '#94a3b8', marginBottom: '24px' }}>Table 'sites' missing.</p>
 
                         <div style={{ position: 'relative', background: 'rgba(0,0,0,0.3)', padding: '20px', borderRadius: '12px', textAlign: 'left', marginBottom: '24px', border: '1px solid rgba(255,255,255,0.05)' }}>
                             <pre style={{ margin: 0, fontSize: '11px', color: '#60a5fa', overflowX: 'auto' }}>
@@ -91,106 +78,72 @@ alter publication supabase_realtime add table sites;`;
                                     borderRadius: '8px', fontSize: '12px', fontWeight: 700, cursor: 'pointer'
                                 }}
                             >
-                                {copied ? 'COPIED!' : 'COPY SQL'}
+                                {copied ? 'COPIED!' : 'COPY'}
                             </button>
-                        </div>
-
-                        <p style={{ fontSize: '14px', color: '#f8fafc' }}>
-                            <strong>How to fix:</strong> Open your <a href="https://supabase.com/dashboard" target="_blank" rel="noreferrer" style={{ color: '#3b82f6' }}>Supabase Dashboard</a>, go to <strong>SQL Editor</strong>, paste this code, and click <strong>Run</strong>.
-                        </p>
-                    </div>
-                )}
-
-                {dbError && !(dbError.code === 'PGRST116' || dbError.code === 'PGRST205' || dbError.message?.includes('relation "sites" does not exist')) && (
-                    <div style={{
-                        background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)',
-                        borderRadius: '24px', padding: '32px', marginTop: '32px', textAlign: 'center'
-                    }}>
-                        <h2 style={{ fontSize: '24px', fontWeight: 900, textTransform: 'uppercase', marginBottom: '8px' }}>Connection Error</h2>
-                        <p style={{ color: '#94a3b8', marginBottom: '16px' }}>Supabase returned an error. Please check your credentials in <code>src/supabaseClient.js</code>.</p>
-                        <div style={{ background: 'rgba(0,0,0,0.3)', padding: '16px', borderRadius: '12px', textAlign: 'left', border: '1px solid rgba(239,68,68,0.2)' }}>
-                            <p style={{ margin: '0 0 8px 0', fontSize: '12px', fontWeight: 700, color: '#ef4444' }}>ERROR DETAILS:</p>
-                            <pre style={{ margin: 0, fontSize: '12px', color: 'white', whiteSpace: 'pre-wrap' }}>
-                                {dbError.message || JSON.stringify(dbError)}
-                                {dbError.code && ` (Code: ${dbError.code})`}
-                            </pre>
                         </div>
                     </div>
                 )}
             </div>
 
-            {/* SITES GRID */}
+            {/* SITES LIST */}
             <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-                gap: '24px', padding: '32px 24px', maxWidth: '1200px', margin: '0 auto'
+                display: 'flex', flexDirection: 'column',
+                gap: '16px', padding: '24px', maxWidth: '500px', margin: '0 auto'
             }}>
                 {loading ? (
-                    <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px', opacity: 0.5 }}>
-                        <div className="animate-pulse" style={{ fontSize: '24px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Connecting to Cloud...</div>
+                    <div style={{ textAlign: 'center', padding: '60px', opacity: 0.5 }}>
+                        <div className="animate-pulse" style={{ fontSize: '18px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Connecting...</div>
                     </div>
                 ) : !dbError && sites && sites.length > 0 ? sites.map(site => (
                     <div
                         key={site.id}
                         style={{
                             background: 'rgba(15, 23, 42, 0.7)', backdropFilter: 'blur(8px)',
-                            border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '20px',
-                            padding: '24px', cursor: 'pointer', position: 'relative',
-                            display: 'flex', flexDirection: 'column', gap: '16px',
-                            transition: 'all 0.2s', boxShadow: '0 10px 20px rgba(0,0,0,0.2)'
+                            border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '24px',
+                            padding: '20px', cursor: 'pointer', position: 'relative',
+                            transition: 'all 0.2s', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                         }}
                         onClick={() => navigate(`/site/${site.id}`)}
-                        onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.3)'; }}
-                        onMouseOut={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)'; }}
+                        onMouseOver={e => { e.currentTarget.style.transform = 'scale(1.02)'; e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.3)'; }}
+                        onMouseOut={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)'; }}
                     >
-                        <div style={{ position: 'absolute', top: 0, left: 0, width: '4px', height: '100%', background: '#3b82f6', borderTopLeftRadius: '20px', borderBottomLeftRadius: '20px' }}></div>
-
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 900, textTransform: 'uppercase', lineHeight: 1.2 }}>{site.name || 'Unnamed Site'}</h3>
+                            <div>
+                                <h3 style={{ margin: '0 0 4px 0', fontSize: '18px', fontWeight: 900, textTransform: 'uppercase', lineHeight: 1.2 }}>{site.name || 'Unnamed Site'}</h3>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#94a3b8' }}>
+                                    <Calendar size={13} style={{ color: '#60a5fa' }} />
+                                    <span>{site.date.split('-').reverse().join('-')}</span>
+                                </div>
+                            </div>
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     if (window.confirm('Delete this site?')) deleteSite(site.id);
                                 }}
-                                style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', padding: '4px' }}
+                                style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', padding: '8px' }}
                             >
-                                <Trash2 size={18} />
+                                <Trash2 size={16} />
                             </button>
-                        </div>
-
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                            <span style={{
-                                background: site.status === 'completed' ? 'rgba(16, 185, 129, 0.1)' : site.status === 'outbound_complete' ? 'rgba(245, 158, 11, 0.1)' : 'rgba(59, 130, 246, 0.1)',
-                                color: site.status === 'completed' ? '#10b981' : site.status === 'outbound_complete' ? '#f59e0b' : '#3b82f6',
-                                border: '1px solid currentColor',
-                                padding: '4px 12px',
-                                borderRadius: '100px', fontSize: '10px', fontWeight: 900,
-                                textTransform: 'uppercase', letterSpacing: '0.1em'
-                            }}>
-                                {String(site.status || 'ASSIGNED').replace('_', ' ')}
-                            </span>
-                        </div>
-
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', color: '#94a3b8', fontSize: '14px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <Calendar size={14} style={{ color: '#60a5fa' }} />
-                                <span>{site.date || 'No Date'}</span>
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <Package size={14} style={{ color: '#818cf8' }} />
-                                <span>{(site.products || []).length} Items Logged</span>
-                            </div>
                         </div>
 
                         {/* PRODUCT PREVIEW WITH PROGRESS */}
                         {site.products && site.products.length > 0 && (
                             <div style={{ marginTop: '8px', padding: '12px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.03)' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                    <span style={{ fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', color: '#64748b' }}>Progress</span>
+                                    <span style={{
+                                        color: site.status === 'completed' ? '#10b981' : site.status === 'outbound_complete' ? '#f59e0b' : '#3b82f6',
+                                        fontSize: '10px', fontWeight: 900, textTransform: 'uppercase'
+                                    }}>
+                                        {String(site.status || 'ASSIGNED').replace('_', ' ')}
+                                    </span>
+                                </div>
                                 {site.products.slice(0, 3).map((p, i) => {
                                     const hasStarted = site.status === 'outbound_complete' || site.status === 'completed';
                                     return (
-                                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: i < site.products.slice(0, 3).length - 1 ? '6px' : 0 }}>
-                                            <span style={{ color: '#94a3b8' }}>{p.name}</span>
-                                            <span style={{ fontWeight: 700, color: hasStarted && (p.collected || 0) < p.count ? '#f59e0b' : 'inherit' }}>
+                                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: i < site.products.slice(0, 3).length - 1 ? '4px' : 0 }}>
+                                            <span style={{ color: '#cbd5e1' }}>{p.name}</span>
+                                            <span style={{ fontWeight: 700, color: hasStarted && (p.collected || 0) < p.count ? '#f59e0b' : '#64748b' }}>
                                                 {hasStarted ? `${p.collected || 0}/${p.count}` : p.count}
                                             </span>
                                         </div>
@@ -198,20 +151,36 @@ alter publication supabase_realtime add table sites;`;
                                 })}
                             </div>
                         )}
-
-                        <div style={{ marginTop: 'auto', paddingTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                            <span style={{ color: '#3b82f6', fontWeight: 900, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Open Command Center</span>
-                            <ArrowRight size={16} color="#3b82f6" />
-                        </div>
                     </div>
                 )) : (
-                    <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px', borderRadius: '20px', border: '2px dashed rgba(255,255,255,0.1)', opacity: 0.5 }}>
+                    <div style={{ textAlign: 'center', padding: '60px', borderRadius: '24px', border: '2px dashed rgba(255,255,255,0.1)', opacity: 0.5 }}>
                         <LayoutDashboard size={48} style={{ margin: '0 auto 16px', display: 'block' }} />
-                        <h3 style={{ fontSize: '18px', fontWeight: 700, textTransform: 'uppercase' }}>No Deployments Active</h3>
-                        <p style={{ fontSize: '14px' }}>Start by deploying a new site mission.</p>
+                        <h3 style={{ fontSize: '16px', fontWeight: 700, textTransform: 'uppercase' }}>No Missions Active</h3>
+                        <p style={{ fontSize: '13px' }}>Deploy a new site to get started.</p>
                     </div>
                 )}
             </div>
+
+            {/* FLOATING ACTION BUTTON */}
+            {!dbError && (
+                <div style={{ position: 'fixed', bottom: '30px', right: '30px', zIndex: 100 }}>
+                    <button
+                        onClick={() => setShowModal(true)}
+                        style={{
+                            width: '64px', height: '64px', borderRadius: '50%',
+                            background: 'linear-gradient(135deg, #3b82f6, #6366f1)',
+                            border: 'none', color: 'white',
+                            boxShadow: '0 8px 24px rgba(59, 130, 246, 0.4)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            cursor: 'pointer', transition: 'transform 0.2s'
+                        }}
+                        onMouseOver={e => e.currentTarget.style.transform = 'scale(1.1) rotate(90deg)'}
+                        onMouseOut={e => e.currentTarget.style.transform = 'scale(1) rotate(0deg)'}
+                    >
+                        <Plus size={32} />
+                    </button>
+                </div>
+            )}
 
             {/* DEPLOY MODAL */}
             {showModal && (

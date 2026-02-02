@@ -29,7 +29,7 @@ const AdminCreateInventory = () => {
 
     useEffect(() => {
         if (!siteDetails.name) {
-            navigate('/admin');
+            navigate('/');
         }
     }, [siteDetails, navigate]);
 
@@ -86,7 +86,7 @@ const AdminCreateInventory = () => {
             alert('DEPLOYMENT FAILED: ' + (error.message || 'Check your database connection.'));
         } else {
             setTimeout(() => {
-                navigate('/admin');
+                navigate('/');
             }, 1200);
         }
     };
@@ -100,7 +100,7 @@ const AdminCreateInventory = () => {
                 padding: '30px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between'
             }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                    <button onClick={() => navigate('/admin')} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'white', padding: '12px', borderRadius: '12px', cursor: 'pointer' }}>
+                    <button onClick={() => navigate('/')} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'white', padding: '12px', borderRadius: '12px', cursor: 'pointer' }}>
                         <ArrowLeft size={24} />
                     </button>
                     <div>
