@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { Truck, Calendar, ChevronRight, Bell, Download, X, Package } from 'lucide-react';
+import { Truck, Calendar, ChevronRight, Bell, Download, X, Package, Cloud, Globe, Info } from 'lucide-react';
 
 const TeamLanding = () => {
     const { sites, loading } = useApp();
@@ -9,6 +9,7 @@ const TeamLanding = () => {
     const [showNotification, setShowNotification] = useState(false);
     const [deferredPrompt, setDeferredPrompt] = useState(null);
     const [showInstallBanner, setShowInstallBanner] = useState(false);
+    const [showInfo, setShowInfo] = useState(false);
 
     const [isIOS, setIsIOS] = useState(false);
     const [prevSiteCount, setPrevSiteCount] = useState(0);
@@ -150,98 +151,155 @@ const TeamLanding = () => {
                     </div>
                 )}
 
-                <h2 style={{ fontSize: '11px', fontWeight: 900, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '24px', paddingLeft: '8px' }}>Active Missions</h2>
+                {/* APP INFO MODAL */}
+                {showInfo && (
+                    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)', zIndex: 1100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+                        <div className="animate-fade-in" style={{ background: 'rgba(15, 23, 42, 0.95)', border: '1px solid rgba(59,130,246,0.3)', padding: '32px', borderRadius: '24px', width: '100%', maxWidth: '400px', maxHeight: '80vh', overflowY: 'auto' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+                                <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 900, textTransform: 'uppercase' }}>App Updates</h3>
+                                <button onClick={() => setShowInfo(false)} style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer' }}><X size={24} /></button>
+                            </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    {loading ? (
-                        <div style={{ textAlign: 'center', padding: '60px 24px', opacity: 0.5 }}>
-                            <p style={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }} className="animate-pulse">Connecting to DUA HQ...</p>
-                        </div>
-                    ) : sites && sites.length > 0 ? sites.map(site => (
-                        <div
-                            key={site.id}
-                            style={{
-                                background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255,255,255,0.08)',
-                                borderRadius: '24px', padding: '24px',
-                                display: 'flex', flexDirection: 'column', gap: '20px',
-                                transition: 'all 0.2s', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-                            }}
-                            onMouseOver={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; e.currentTarget.style.transform = 'scale(1.02)'; }}
-                            onMouseOut={e => { e.currentTarget.style.background = 'rgba(15, 23, 42, 0.7)'; e.currentTarget.style.transform = 'scale(1)'; }}
-                        >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                                <div style={{ padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '16px' }}>
-                                    <Calendar size={24} color="#3b82f6" />
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                <div style={{ display: 'flex', gap: '16px' }}>
+                                    <div style={{ minWidth: '40px', height: '40px', borderRadius: '12px', background: 'rgba(59,130,246,0.1)', color: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Bell size={20} /></div>
+                                    <div>
+                                        <h4 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 700 }}>Real-time Alerts</h4>
+                                        <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8', lineHeight: 1.5 }}>Instant sound and banner notifications when new missions are assigned.</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 900, textTransform: 'uppercase' }}>{site.name}</h3>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#64748b', marginTop: '4px', fontWeight: 700 }}>
-                                        <Calendar size={14} /> <span>{site.date.split('-').reverse().join('-')}</span>
-                                        <div style={{ width: '4px', height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '50%' }}></div>
-                                        <span style={{
-                                            color: site.status === 'completed' ? '#10b981' :
-                                                site.status === 'outbound_complete' ? '#f59e0b' : '#3b82f6'
-                                        }}>
-                                            {String(site.status || 'ASSIGNED').replace('_', ' ')}
-                                        </span>
+
+                                <div style={{ display: 'flex', gap: '16px' }}>
+                                    <div style={{ minWidth: '40px', height: '40px', borderRadius: '12px', background: 'rgba(16,185,129,0.1)', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Download size={20} /></div>
+                                    <div>
+                                        <h4 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 700 }}>Universal Install</h4>
+                                        <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8', lineHeight: 1.5 }}>Optimized for iOS & Android. Tap "Install" to add to your home screen.</p>
+                                    </div>
+                                </div>
+
+                                <div style={{ display: 'flex', gap: '16px' }}>
+                                    <div style={{ minWidth: '40px', height: '40px', borderRadius: '12px', background: 'rgba(245,158,11,0.1)', color: '#f59e0b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Cloud size={20} /></div>
+                                    <div>
+                                        <h4 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 700 }}>Direct Sync</h4>
+                                        <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8', lineHeight: 1.5 }}>Reports sync directly to Admin Dashboard. No WhatsApp needed.</p>
+                                    </div>
+                                </div>
+
+                                <div style={{ display: 'flex', gap: '16px' }}>
+                                    <div style={{ minWidth: '40px', height: '40px', borderRadius: '12px', background: 'rgba(236,72,153,0.1)', color: '#ec4899', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Globe size={20} /></div>
+                                    <div>
+                                        <h4 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 700 }}>Offline Ready</h4>
+                                        <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8', lineHeight: 1.5 }}>Works in the background. Notifications arrive even when minimized.</p>
                                     </div>
                                 </div>
                             </div>
 
-                            {(!site.status || site.status === 'assigned') ? (
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        navigate(`/site/${site.id}/outbound`);
-                                    }}
-                                    style={{
-                                        width: '100%', padding: '16px', borderRadius: '16px', border: 'none',
-                                        background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                                        color: 'white', fontWeight: 900, cursor: 'pointer',
-                                        textTransform: 'uppercase', fontSize: '14px', letterSpacing: '0.05em',
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
-                                        boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)'
-                                    }}
-                                >
-                                    <Truck size={20} /> START MISSION
-                                </button>
-                            ) : (
-                                <div style={{ display: 'flex', gap: '10px' }}>
+                            <div style={{ marginTop: '32px', textAlign: 'center', fontSize: '11px', color: '#475569' }}>
+                                VERSION 2.1.0 • DUA SETTINGS TEAM
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                <div style={{ maxWidth: '500px', margin: '0 auto', padding: '24px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingLeft: '8px' }}>
+                        <h2 style={{ fontSize: '11px', fontWeight: 900, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.2em', margin: 0 }}>Active Missions</h2>
+                        <button onClick={() => setShowInfo(true)} style={{ background: 'transparent', border: 'none', color: '#3b82f6', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <Info size={14} /> WHAT'S NEW
+                        </button>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                        {loading ? (
+                            <div style={{ textAlign: 'center', padding: '60px 24px', opacity: 0.5 }}>
+                                <p style={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }} className="animate-pulse">Connecting to DUA HQ...</p>
+                            </div>
+                        ) : sites && sites.length > 0 ? sites.map(site => (
+                            <div
+                                key={site.id}
+                                style={{
+                                    background: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255,255,255,0.08)',
+                                    borderRadius: '24px', padding: '24px',
+                                    display: 'flex', flexDirection: 'column', gap: '20px',
+                                    transition: 'all 0.2s', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                                }}
+                                onMouseOver={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; e.currentTarget.style.transform = 'scale(1.02)'; }}
+                                onMouseOut={e => { e.currentTarget.style.background = 'rgba(15, 23, 42, 0.7)'; e.currentTarget.style.transform = 'scale(1)'; }}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                                    <div style={{ padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '16px' }}>
+                                        <Calendar size={24} color="#3b82f6" />
+                                    </div>
+                                    <div>
+                                        <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 900, textTransform: 'uppercase' }}>{site.name}</h3>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#64748b', marginTop: '4px', fontWeight: 700 }}>
+                                            <Calendar size={14} /> <span>{site.date.split('-').reverse().join('-')}</span>
+                                            <div style={{ width: '4px', height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '50%' }}></div>
+                                            <span style={{
+                                                color: site.status === 'completed' ? '#10b981' :
+                                                    site.status === 'outbound_complete' ? '#f59e0b' : '#3b82f6'
+                                            }}>
+                                                {String(site.status || 'ASSIGNED').replace('_', ' ')}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {(!site.status || site.status === 'assigned') ? (
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             navigate(`/site/${site.id}/outbound`);
                                         }}
                                         style={{
-                                            flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid rgba(59, 130, 246, 0.3)',
-                                            background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6', fontWeight: 700, cursor: 'pointer',
-                                            textTransform: 'uppercase', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
+                                            width: '100%', padding: '16px', borderRadius: '16px', border: 'none',
+                                            background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                                            color: 'white', fontWeight: 900, cursor: 'pointer',
+                                            textTransform: 'uppercase', fontSize: '14px', letterSpacing: '0.05em',
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+                                            boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)'
                                         }}
                                     >
-                                        <Truck size={14} /> From Godown
+                                        <Truck size={20} /> START MISSION
                                     </button>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            navigate(`/site/${site.id}/inbound`);
-                                        }}
-                                        style={{
-                                            flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid rgba(16, 185, 129, 0.3)',
-                                            background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', fontWeight: 700, cursor: 'pointer',
-                                            textTransform: 'uppercase', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
-                                        }}
-                                    >
-                                        <Package size={14} /> From Site
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    )) : (
-                        <div style={{ textAlign: 'center', padding: '60px 24px', borderRadius: '24px', border: '2px dashed rgba(255,255,255,0.1)', opacity: 0.5 }}>
-                            <Package size={48} style={{ margin: '0 auto 16px', display: 'block' }} />
-                            <p style={{ margin: 0, fontWeight: 700 }}>No sites assigned yet.</p>
-                        </div>
-                    )}
+                                ) : (
+                                    <div style={{ display: 'flex', gap: '10px' }}>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                navigate(`/site/${site.id}/outbound`);
+                                            }}
+                                            style={{
+                                                flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid rgba(59, 130, 246, 0.3)',
+                                                background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6', fontWeight: 700, cursor: 'pointer',
+                                                textTransform: 'uppercase', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
+                                            }}
+                                        >
+                                            <Truck size={14} /> From Godown
+                                        </button>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                navigate(`/site/${site.id}/inbound`);
+                                            }}
+                                            style={{
+                                                flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid rgba(16, 185, 129, 0.3)',
+                                                background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', fontWeight: 700, cursor: 'pointer',
+                                                textTransform: 'uppercase', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
+                                            }}
+                                        >
+                                            <Package size={14} /> From Site
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        )) : (
+                            <div style={{ textAlign: 'center', padding: '60px 24px', borderRadius: '24px', border: '2px dashed rgba(255,255,255,0.1)', opacity: 0.5 }}>
+                                <Package size={48} style={{ margin: '0 auto 16px', display: 'block' }} />
+                                <p style={{ margin: 0, fontWeight: 700 }}>No sites assigned yet.</p>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
