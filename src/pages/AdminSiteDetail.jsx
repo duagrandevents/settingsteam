@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { Save, Plus, Trash2, ArrowLeft, Edit2, AlertTriangle, Share2, Calendar, Copy } from 'lucide-react';
+import { Save, Plus, Trash2, ArrowLeft, Edit2, AlertTriangle, Share2, Calendar } from 'lucide-react';
 
 const AdminSiteDetail = () => {
     const { siteId } = useParams();
@@ -44,7 +44,7 @@ const AdminSiteDetail = () => {
         setIsEditing(false);
     };
 
-    const generateReport = (type) => {
+    const handleShareReport = (type) => {
         const title = type === 'collection' ? 'COLLECTION REPORT' : 'RETURN REPORT';
         let reportText = `*${title} - ${site.name}*\nDate: ${site.date}\n\n`;
 
@@ -58,19 +58,9 @@ const AdminSiteDetail = () => {
                 reportText += `- ${p.name}: Taken ${taken}, Ret ${returned}${missing > 0 ? ` (*MISSING ${missing}*)` : ''}\n`;
             }
         });
-        return reportText;
-    };
 
-    const handleShareReport = (type) => {
-        const reportText = generateReport(type);
         const url = `https://wa.me/?text=${encodeURIComponent(reportText)}`;
         window.open(url, '_blank');
-    };
-
-    const handleCopyReport = (type) => {
-        const reportText = generateReport(type);
-        navigator.clipboard.writeText(reportText);
-        alert('Report copied to clipboard!');
     };
 
     return (
@@ -166,23 +156,12 @@ const AdminSiteDetail = () => {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <h3 style={{ fontSize: '18px', fontWeight: 900, textTransform: 'uppercase' }}>Reports Area</h3>
                         <div style={{ display: 'flex', gap: '12px' }}>
-                            <div style={{ display: 'flex', gap: '8px' }}>
-                                <button onClick={() => handleShareReport('collection')} style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.2)', color: '#3b82f6', padding: '12px 16px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
-                                    <Share2 size={16} /> SHARE
-                                </button>
-                                <button onClick={() => handleCopyReport('collection')} style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.2)', color: '#3b82f6', padding: '12px 16px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
-                                    <Copy size={16} /> COPY
-                                </button>
-                            </div>
-                            <div style={{ width: '1px', background: 'rgba(255,255,255,0.1)', margin: '0 8px' }}></div>
-                            <div style={{ display: 'flex', gap: '8px' }}>
-                                <button onClick={() => handleShareReport('return')} style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)', color: '#10b981', padding: '12px 16px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
-                                    <Share2 size={16} /> SHARE
-                                </button>
-                                <button onClick={() => handleCopyReport('return')} style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)', color: '#10b981', padding: '12px 16px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
-                                    <Copy size={16} /> COPY
-                                </button>
-                            </div>
+                            <button onClick={() => handleShareReport('collection')} style={{ background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.2)', color: '#3b82f6', padding: '12px 20px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Share2 size={16} /> COLLECTION
+                            </button>
+                            <button onClick={() => handleShareReport('return')} style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)', color: '#10b981', padding: '12px 20px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Share2 size={16} /> RETURN
+                            </button>
                         </div>
                     </div>
                 </div>
