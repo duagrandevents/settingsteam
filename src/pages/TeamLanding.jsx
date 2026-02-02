@@ -10,10 +10,23 @@ const TeamLanding = () => {
     const [deferredPrompt, setDeferredPrompt] = useState(null);
     const [showInstallBanner, setShowInstallBanner] = useState(false);
 
+    const [isIOS, setIsIOS] = useState(false);
+
     useEffect(() => {
         const lastSeenCount = parseInt(localStorage.getItem('team_last_seen_sites')) || 0;
         if (sites.length > lastSeenCount) {
             setShowNotification(true);
+        }
+
+        // Check if installed
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        // Check if iOS
+        const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        setIsIOS(isIOSDevice);
+
+        if (!isStandalone) {
+            // Show banner after a slight delay for better UX
+            setTimeout(() => setShowInstallBanner(true), 2000);
         }
 
         const handleBeforeInstallPrompt = (e) => {
@@ -32,12 +45,15 @@ const TeamLanding = () => {
     };
 
     const handleInstallClick = async () => {
-        if (!deferredPrompt) return;
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-            setDeferredPrompt(null);
-            setShowInstallBanner(false);
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                setDeferredPrompt(null);
+                setShowInstallBanner(false);
+            }
+        } else if (isIOS) {
+            alert('To install on iOS:\n1. Tap the Share button below 👇\n2. Scroll down and tap "Add to Home Screen" ➕');
         }
     };
 
@@ -64,22 +80,27 @@ const TeamLanding = () => {
             <div style={{ maxWidth: '500px', margin: '0 auto', padding: '24px' }}>
                 {/* INSTALL BANNER */}
                 {showInstallBanner && (
-                    <div style={{
-                        background: 'rgba(15, 23, 42, 0.7)', backdropFilter: 'blur(16px)',
+                    <div className="animate-fade-in" style={{
+                        background: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(16px)',
                         border: '1px solid rgba(59, 130, 246, 0.3)', borderRadius: '24px',
-                        padding: '24px', marginBottom: '32px', position: 'relative', overflow: 'hidden'
+                        padding: '24px', marginBottom: '32px', position: 'relative', overflow: 'hidden',
+                        boxShadow: '0 8px 32px rgba(0,0,0,0.3)'
                     }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
                             <div style={{ padding: '12px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '16px' }}>
                                 <Download size={32} color="#3b82f6" />
                             </div>
                             <div>
-                                <h4 style={{ margin: 0, fontSize: '18px', fontWeight: 900 }}>Install DUA SETTING</h4>
-                                <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#94a3b8' }}>Add to home screen for a seamless experience</p>
+                                <h4 style={{ margin: 0, fontSize: '18px', fontWeight: 900 }}>INSTALL APP</h4>
+                                <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#94a3b8' }}>
+                                    {isIOS ? 'Tap Share → Add to Home Screen' : 'Add to home screen for best experience'}
+                                </p>
                             </div>
                         </div>
                         <div style={{ display: 'flex', gap: '12px' }}>
-                            <button onClick={handleInstallClick} style={{ flex: 1, background: '#3b82f6', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}>INSTALL NOW</button>
+                            <button onClick={handleInstallClick} style={{ flex: 1, background: '#3b82f6', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                                {isIOS ? 'HOW TO INSTALL' : 'INSTALL NOW'}
+                            </button>
                             <button onClick={() => setShowInstallBanner(false)} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'white', padding: '12px', borderRadius: '12px', cursor: 'pointer' }}>
                                 <X size={20} />
                             </button>
