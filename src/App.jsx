@@ -10,10 +10,26 @@ import AdminCreateInventory from './pages/AdminCreateInventory';
 import TeamHeader from './components/TeamHeader';
 import { LayoutDashboard, Users } from 'lucide-react';
 
+import { useNavigate } from 'react-router-dom';
+
 const NavBar = () => {
   const location = useLocation();
-  const isAdmin = location.pathname.startsWith('/admin') || location.pathname === '/';
-  const isTeam = location.pathname.startsWith('/team');
+  const navigate = useNavigate();
+
+  // DOMAIN DETECTION FOR SEPARATE PORTALS
+  const isTeamDomain = window.location.hostname.includes('settingsteam') || window.location.hostname.includes('vercel.app'); // Broader check for verified Team URLs if needed, but 'settingsteam' is key.
+  // Actually, 'includes' might be risky for admin if it's on vercel too.
+  // Let's stick to 'settingsteam' as per the user's setup.
+  const isTeamPortal = window.location.hostname.includes('settingsteam');
+
+  useEffect(() => {
+    if (isTeamPortal && location.pathname === '/') {
+      navigate('/team', { replace: true });
+    }
+  }, [isTeamPortal, location, navigate]);
+
+  const isAdmin = (location.pathname.startsWith('/admin') || location.pathname === '/') && !isTeamPortal;
+  const isTeam = location.pathname.startsWith('/team') || isTeamPortal; // Force Team Header on team portal
 
   if (isAdmin) {
     return (

@@ -23,7 +23,7 @@ const TeamHeader = () => {
     return (
         <>
             <header style={{
-                position: 'sticky', top: 0, zIndex: 500,
+                position: 'sticky', top: 0, zIndex: 9999,
                 background: 'rgba(2, 6, 23, 0.9)', backdropFilter: 'blur(16px)',
                 borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
                 padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center'
