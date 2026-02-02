@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminCreateInventory from './pages/AdminCreateInventory';
@@ -20,6 +20,15 @@ const NavBar = () => {
     return null;
 };
 
+// Handle routing based on domain (Admin vs Team)
+const HomeRoute = () => {
+    const isTeamDomain = window.location.hostname.includes('team') || window.location.hostname.includes('settingsteam');
+    if (isTeamDomain) {
+        return <Navigate to="/team" replace />;
+    }
+    return <AdminDashboard />;
+};
+
 const App = () => {
     return (
         <AppProvider>
@@ -28,7 +37,7 @@ const App = () => {
                 <main style={{ minHeight: '100vh', background: '#020617' }}>
                     <Routes>
                         {/* Admin Routes */}
-                        <Route path="/" element={<AdminDashboard />} />
+                        <Route path="/" element={<HomeRoute />} />
                         <Route path="/create-inventory" element={<AdminCreateInventory />} />
                         <Route path="/site/:siteId" element={<AdminSiteDetail />} />
 
@@ -38,7 +47,7 @@ const App = () => {
                         <Route path="/team/site/:siteId/inbound" element={<SiteToGodown />} />
 
                         {/* Fallback */}
-                        <Route path="*" element={<AdminDashboard />} />
+                        <Route path="*" element={<HomeRoute />} />
                     </Routes>
                 </main>
             </Router>
