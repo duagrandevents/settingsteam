@@ -1,14 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { Plus, Calendar, Package, ArrowRight, Trash2, LayoutDashboard } from 'lucide-react';
+import { Plus, Calendar, Package, ArrowRight, Trash2, LayoutDashboard, Settings } from 'lucide-react';
 
 const AdminDashboard = () => {
-    const { sites, deleteSite, loading, dbError } = useApp();
+    const { sites, deleteSite, loading, dbError, appSettings, updateSetting } = useApp();
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const [newSite, setNewSite] = useState({ name: '', date: '' });
     const [copied, setCopied] = useState(false);
+
+    // Settings Logic
+    const [showSettingsModal, setShowSettingsModal] = useState(false);
+    const [pinInput, setPinInput] = useState('');
+
+    useEffect(() => {
+        if (showSettingsModal) {
+            setPinInput(appSettings['team_pin'] || '1234');
+        }
+    }, [showSettingsModal, appSettings]);
 
     const handleCreateSite = (e) => {
         e.preventDefault();
@@ -50,6 +60,16 @@ alter publication supabase_realtime add table sites;`;
                     </h1>
                     <p style={{ color: '#94a3b8', fontSize: '10px', fontWeight: 700, margin: '2px 0 0 0', textTransform: 'uppercase' }}>Control Center</p>
                 </div>
+                <button
+                    onClick={() => setShowSettingsModal(true)}
+                    style={{
+                        background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+                        color: '#cbd5e1', padding: '10px', borderRadius: '12px', cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    }}
+                >
+                    <Settings size={20} />
+                </button>
             </header>
 
             {/* ERROR / SETUP NOTICES */}
@@ -207,6 +227,55 @@ alter publication supabase_realtime add table sites;`;
                                 <button type="submit" style={{ flex: 1, background: '#3b82f6', border: 'none', color: 'white', padding: '16px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}>START PHASE 2</button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {/* SETTINGS MODAL */}
+            {showSettingsModal && (
+                <div style={{ position: 'fixed', inset: 0, background: 'rgba(2, 6, 23, 0.95)', backdropFilter: 'blur(16px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+                    <div style={{ background: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(255,255,255,0.1)', padding: '40px', borderRadius: '32px', width: '100%', maxWidth: '360px', textAlign: 'center' }}>
+                        <div style={{ background: 'rgba(99, 102, 241, 0.1)', width: '64px', height: '64px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+                            <Settings size={32} color="#6366f1" />
+                        </div>
+                        <h2 style={{ fontSize: '24px', fontWeight: 900, textTransform: 'uppercase', margin: '0 0 8px 0' }}>Security</h2>
+                        <p style={{ color: '#94a3b8', fontSize: '14px', marginBottom: '24px' }}>Update Team App PIN code.</p>
+
+                        <div style={{ marginBottom: '24px' }}>
+                            <input
+                                type="text"
+                                maxLength={4}
+                                pattern="\d*"
+                                placeholder="0000"
+                                value={pinInput}
+                                onChange={e => {
+                                    const val = e.target.value.replace(/\D/g, '').slice(0, 4);
+                                    setPinInput(val);
+                                }}
+                                style={{
+                                    background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)',
+                                    color: 'white', padding: '16px', borderRadius: '16px',
+                                    fontSize: '32px', fontWeight: 900, textAlign: 'center', letterSpacing: '0.2em',
+                                    width: '100%'
+                                }}
+                            />
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '12px' }}>
+                            <button type="button" onClick={() => setShowSettingsModal(false)} style={{ flex: 1, background: 'rgba(255,255,255,0.05)', border: 'none', color: '#94a3b8', padding: '16px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer' }}>CANCEL</button>
+                            <button
+                                onClick={() => {
+                                    if (pinInput.length === 4) {
+                                        updateSetting('team_pin', pinInput);
+                                        setShowSettingsModal(false);
+                                    }
+                                }}
+                                disabled={pinInput.length !== 4}
+                                style={{ flex: 1, background: pinInput.length === 4 ? '#6366f1' : '#334155', border: 'none', color: pinInput.length === 4 ? 'white' : '#64748b', padding: '16px', borderRadius: '12px', fontWeight: 700, cursor: pinInput.length === 4 ? 'pointer' : 'not-allowed' }}
+                            >
+                                SAVE PIN
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

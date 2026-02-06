@@ -8,6 +8,33 @@ export const AppProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [dbError, setDbError] = useState(null); // 'missing_table', 'connection_error', or null
 
+  const [appSettings, setAppSettings] = useState({});
+
+  // Fetch App Settings (PIN)
+  useEffect(() => {
+    const fetchSettings = async () => {
+      const { data, error } = await supabase.from('app_settings').select('*');
+      if (data) {
+        const settingsMap = data.reduce((acc, curr) => ({ ...acc, [curr.key]: curr.value }), {});
+        setAppSettings(settingsMap);
+      }
+    };
+    fetchSettings();
+  }, []);
+
+  const updateSetting = async (key, value) => {
+    const { error } = await supabase
+      .from('app_settings')
+      .upsert({ key, value });
+
+    if (!error) {
+      setAppSettings(prev => ({ ...prev, [key]: value }));
+    } else {
+      console.error('Error updating setting:', error);
+    }
+    return { error };
+  };
+
   // Initial Fetch & Real-time Subscription
   useEffect(() => {
     const fetchSites = async () => {
@@ -91,7 +118,7 @@ export const AppProvider = ({ children }) => {
   }, []);
 
   return (
-    <AppContext.Provider value={{ sites, addSite, updateSite, getSite, deleteSite, loading, dbError }}>
+    <AppContext.Provider value={{ sites, addSite, updateSite, getSite, deleteSite, loading, dbError, appSettings, updateSetting }}>
       {children}
     </AppContext.Provider>
   );

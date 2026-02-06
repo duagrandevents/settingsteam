@@ -9,13 +9,11 @@ import GodownToSite from './pages/GodownToSite';
 import SiteToGodown from './pages/SiteToGodown';
 import TeamHeader from './components/TeamHeader';
 
+import PinLock from './components/PinLock';
+
 const NavBar = () => {
     const location = useLocation();
     const isTeam = location.pathname.startsWith('/team');
-    // Only show TeamHeader on team routes, or create an AdminHeader?
-    // For now, let's keep TeamHeader for team, and maybe nothing or existing header for Admin?
-    // The Admin pages have their own headers inside them.
-
     const isTeamDomain = window.location.hostname.includes('team') || window.location.hostname.includes('settingsteam');
     if (isTeam || isTeamDomain) return <TeamHeader />;
     return null;
@@ -25,7 +23,11 @@ const NavBar = () => {
 const HomeRoute = () => {
     const isTeamDomain = window.location.hostname.includes('team') || window.location.hostname.includes('settingsteam');
     if (isTeamDomain) {
-        return <TeamLanding />;
+        return (
+            <PinLock>
+                <TeamLanding />
+            </PinLock>
+        );
     }
     return <AdminDashboard />;
 };
@@ -43,9 +45,21 @@ const App = () => {
                         <Route path="/site/:siteId" element={<AdminSiteDetail />} />
 
                         {/* Team Routes */}
-                        <Route path="/team" element={<TeamLanding />} />
-                        <Route path="/site/:siteId/outbound" element={<GodownToSite />} />
-                        <Route path="/site/:siteId/inbound" element={<SiteToGodown />} />
+                        <Route path="/team" element={
+                            <PinLock>
+                                <TeamLanding />
+                            </PinLock>
+                        } />
+                        <Route path="/site/:siteId/outbound" element={
+                            <PinLock>
+                                <GodownToSite />
+                            </PinLock>
+                        } />
+                        <Route path="/site/:siteId/inbound" element={
+                            <PinLock>
+                                <SiteToGodown />
+                            </PinLock>
+                        } />
 
                         {/* Fallback */}
                         <Route path="*" element={<HomeRoute />} />
